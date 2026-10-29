@@ -7,7 +7,7 @@ import { SurveyWizard } from './components/survey/SurveyWizard';
 import { ReportView } from './components/report/ReportView';
 import { FeedbackForm } from './components/feedback/FeedbackForm';
 import { generateFullReport } from './lib/reportEngine';
-import { submitSurveyData, submitFeedbackData, syncWithServerConfig } from './lib/sheetsAdapter';
+import { submitSurveyData, submitFeedbackData } from './lib/sheetsAdapter';
 import { CONSENT_VERSION } from './config/survey';
 import type { SurveyAnswers, SurveyScoringResult, SurveyFeedbackPayload } from './types/survey';
 
@@ -18,20 +18,6 @@ export default function App() {
   const [responseId, setResponseId] = useState<string>(() => `RBA-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`);
   const [answers, setAnswers] = useState<SurveyAnswers>({});
   const [report, setReport] = useState<SurveyScoringResult | null>(null);
-
-  // Pre-sync server configuration silently on mount
-  useEffect(() => {
-    syncWithServerConfig();
-  }, []);
-
-  // Check query params on mount (e.g. autostart for quick test)
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('autostart') === '1') {
-      setEmail('participant@rba-test.edu.vn');
-      setCurrentTab('survey');
-    }
-  }, []);
 
   const handleStartSurvey = () => {
     if (email) {

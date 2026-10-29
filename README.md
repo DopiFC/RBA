@@ -81,13 +81,8 @@ Bộ công cụ gồm **15 câu hỏi chính thức**:
 npx --yes tsx --test src/lib/scoring.test.ts
 ```
 
-### 2. Khởi động Máy chủ Phát triển (Full-stack)
+### 2. Khởi động Ứng dụng
 ```bash
 npm run dev
 ```
-Ứng dụng sẽ chạy tại `http://localhost:3000`.
-
-### 3. Đăng nhập Cổng Quản trị Nghiên cứu
-- Đường dẫn: Nhấn nút **Quản trị** trên thanh điều hướng hoặc truy cập `http://localhost:3000/?admin=1`.
-- Email: `nhgb2605@gmail.com` hoặc `admin@rba.edu.vn`.
-- Mật khẩu: `rba_science_admin_2026` hoặc `admin123`.
+Ứng dụng sẽ chạy tại `http://localhost:3000`. Người dùng hoàn thành khảo sát sẽ nhận báo cáo chẩn đoán, xuất PDF và dữ liệu được đồng bộ trực tiếp về Google Sheets.

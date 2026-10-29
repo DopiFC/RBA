@@ -77,11 +77,8 @@ GOOGLE_SERVICE_ACCOUNT_EMAIL=rba-sheets-writer@project-name.iam.gserviceaccount.
 # Private Key (Sao chép nguyên văn cả dấu ngoặc kép và \n)
 GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC...\n-----END PRIVATE KEY-----\n"
 
-# Email quản trị viên có quyền đăng nhập vào Cổng Quản trị Nghiên cứu (phân cách bởi dấu phẩy)
-ADMIN_EMAILS=nhgb2605@gmail.com,admin@rba.edu.vn
-
-# Mật khẩu quản trị viên
-ADMIN_SECRET_KEY=rba_science_admin_2026
+# Email người phụ trách (tùy chọn)
+ADMIN_EMAILS=admin@example.com
 ```
 
 > **Lưu ý về Private Key có ký tự xuống dòng:**

@@ -1,14 +1,13 @@
 # HƯỚNG DẪN KẾT NỐI GOOGLE SHEET TRÊN IPAD & GITHUB PAGES
 
-Bảng tính Google Sheet của bạn:
-`https://docs.google.com/spreadsheets/d/13t07Qp8vM-znpW23_zqlw1lAAAV08j1gD-4hJCdvOQ0/edit?usp=sharing`
+Bảng tính Google Sheet cá nhân của bạn dùng để lưu trữ dữ liệu khảo sát.
 
 ---
 
 ## 3 Bước Cực Kỳ Đơn Giản Trên Trình Duyệt Safari (iPad)
 
 ### Bước 1: Mở Apps Script từ Bảng tính của bạn
-1. Mở link Google Sheet trên bằng trình duyệt Safari/Chrome trên iPad.
+1. Mở file Google Sheet của bạn trên trình duyệt Safari/Chrome.
 2. Trên thanh menu, chọn: **Tiện ích mở rộng (Extensions)** > **Apps Script**.
    *(Trình soạn thảo mã của Google sẽ mở ra trong một tab mới).*
 
@@ -21,8 +20,8 @@ Bảng tính Google Sheet của bạn:
 1. Ở góc trên bên phải, nhấn nút **Triển khai (Deploy)** > chọn **Tùy chọn triển khai mới (New deployment)**.
 2. Nhấn vào biểu tượng bánh răng bên cạnh dòng "Chọn loại" > chọn **Ứng dụng web (Web app)**.
 3. Thiết lập 3 thông số:
-   - **Mô tả (Description)**: `RBA Realtime Sync v2`
-   - **Thực thi dưới dạng (Execute as)**: **Tôi (Me / nhgb2605@gmail.com)**
+   - **Mô tả (Description)**: `RBA Realtime Sync`
+   - **Thực thi dưới dạng (Execute as)**: **Tôi (Me)**
    - **Ai có quyền truy cập (Who has access)**: **Bất kỳ ai (Anyone)**  *(Rất quan trọng để mọi người làm khảo sát đều gửi được dữ liệu)*.
 4. Nhấn **Triển khai (Deploy)**. Nếu Google yêu cầu ủy quyền, chọn tài khoản của bạn > chọn *Nâng cao (Advanced)* > chọn *Đi tới dự án (không an toàn)* > bấm *Cho phép (Allow)*.
 5. Google sẽ cấp cho bạn một **URL Ứng dụng web (Web app URL)** dạng:

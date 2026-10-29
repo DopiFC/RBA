@@ -149,7 +149,7 @@ export const ConsentScreen: React.FC<ConsentScreenProps> = ({
                 <strong>3. Lưu trữ & Quản lý:</strong> Dữ liệu câu trả lời được lưu trữ an toàn trong Google Spreadsheet do người nghiên cứu quản lý. Bảng email được lưu trữ cách ly với bảng câu trả lời nhằm bảo vệ tính riêng tư.
               </p>
               <p>
-                <strong>4. Thời hạn lưu trữ & Liên hệ:</strong> Dữ liệu dự kiến lưu trữ trong vòng 5 năm phục vụ công bố khoa học. Đầu mối tiếp nhận thắc mắc và xử lý dữ liệu: <em>nhgb2605@gmail.com</em>.
+                <strong>4. Thời hạn lưu trữ & Liên hệ:</strong> Dữ liệu dự kiến lưu trữ trong vòng 5 năm phục vụ công bố khoa học. Đầu mối tiếp nhận thắc mắc và xử lý dữ liệu: <em>lienhe@kinhtedoanhnghiep.vn</em>.
               </p>
               <p>
                 <strong>5. Quyền của bạn:</strong> Bạn có quyền yêu cầu truy cập, đính chính, rút lại sự đồng thuận hoặc yêu cầu xóa dữ liệu bất kỳ lúc nào bằng cách gửi yêu cầu về email đầu mối nêu trên.
