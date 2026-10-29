@@ -1,0 +1,6 @@
+{
+  "name": "RBA - Khảo sát & Phân tích Kinh tế Doanh nghiệp",
+  "description": "Hệ thống nghiên cứu khảo sát, chẩn đoán và phân tích kinh tế vi mô doanh nghiệp theo nguyên lý Kinh tế học cho nhà quản trị.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

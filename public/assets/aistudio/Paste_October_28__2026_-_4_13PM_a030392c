@@ -1,0 +1,899 @@
+YÊU CẦU XÂY DỰNG WEB APP KHẢO SÁT VÀ PHÂN TÍCH KINH TẾ DOANH NGHIỆP
+
+I. VAI TRÒ VÀ MỤC TIÊU DỰ ÁN
+
+Bạn là chuyên gia Full-stack Developer, chuyên gia thiết kế sản phẩm số, chuyên gia phân tích dữ liệu kinh doanh và chuyên gia ứng dụng Kinh tế học cho nhà quản trị.
+
+Hãy xây dựng một ứng dụng web hoàn chỉnh phục vụ khảo sát tình hình thực tế của doanh nghiệp, hộ kinh doanh và cá nhân kinh doanh. Ứng dụng phải có khả năng thu thập dữ liệu khảo sát, phân tích câu trả lời bằng các quy tắc kinh tế học có căn cứ, trực quan hóa kết quả trên dashboard, tạo báo cáo chẩn đoán và thu thập ý kiến phản hồi sau báo cáo.
+
+Tên dự án tạm thời: RBA
+
+Tôi sẽ sử dụng hệ thống phục vụ nghiên cứu khoa học. Vì vậy, tính chính xác, khả năng kiểm tra công thức, chất lượng dữ liệu, khả năng truy xuất kết quả và bảo mật là các yêu cầu quan trọng ngang với giao diện.
+
+Tài liệu nền tảng
+
+Sử dụng 8 tài liệu PDF đã được đính kèm trong dự án:
+
+1. Đại cương Kinh tế học cho nhà quản trị.
+2. Cung, cầu và giá thị trường.
+3. Lý thuyết sản xuất và lý thuyết chi phí.
+4. Định giá và sản lượng trong thị trường cạnh tranh hoàn toàn.
+5. Định giá trong thị trường độc quyền.
+6. Định giá trong thị trường cạnh tranh không hoàn toàn.
+7. Lý thuyết trò chơi và thông tin bất cân xứng.
+8. Phát triển bền vững: những tư tưởng và mô hình phát triển mới.
+
+Sử dụng các tài liệu này làm nền tảng lý thuyết. Không tự ý gán những khẳng định chưa được kiểm chứng cho giáo trình. Không tạo ra công thức kinh tế hoặc phương pháp thống kê giả định là công thức chính thức của tài liệu.
+
+Nguyên tắc khi triển khai
+
+* Tiếp tục phát triển trên cấu trúc dự án hiện có trong Google AI Studio nếu đã có mã nguồn; không xóa và viết lại toàn bộ một dự án đang hoạt động.
+* Kiểm tra cấu trúc file, framework, dependency và khả năng chạy preview trước khi chỉnh sửa.
+* Ưu tiên một ứng dụng web hiệu năng tốt, giao diện gọn, dễ sử dụng trên điện thoại, máy tính bảng và máy tính.
+* Ưu tiên các thuật toán tính điểm xác định, có thể kiểm thử và giải thích được.
+* Có thể bổ sung Gemini để hỗ trợ viết diễn giải báo cáo, nhưng Gemini không được tự tạo ra số liệu khảo sát, điểm số hoặc kết luận mà dữ liệu không hỗ trợ.
+* Không sử dụng dữ liệu giả để tạo cảm giác rằng ứng dụng đã kết nối Google Sheets hoặc đã phân tích dữ liệu thực tế.
+* Nếu chưa có thông tin xác thực để kết nối Google Sheets, hãy triển khai phần tích hợp theo cấu trúc sẵn sàng cấu hình và hướng dẫn chính xác những bước còn thiếu.
+* Không tuyên bố lưu dữ liệu thành công nếu máy chủ chưa xác nhận ghi dữ liệu thành công.
+
+⸻
+
+II. ĐỐI TƯỢNG SỬ DỤNG
+
+Ứng dụng phục vụ ba nhóm chính:
+
+1. Doanh nghiệp.
+2. Hộ kinh doanh.
+3. Cá nhân kinh doanh hoặc tự kinh doanh.
+
+Bộ khảo sát phải phù hợp với các đơn vị có quy mô khác nhau, kể cả người kinh doanh nhỏ không có bộ phận tài chính, kế toán quản trị hoặc hệ thống báo cáo chuyên nghiệp.
+
+Không yêu cầu người trả lời phải hiểu những thuật ngữ như độ co giãn của cầu, doanh thu biên, chi phí biên, độc quyền nhóm hay bất đối xứng thông tin. Hãy chuyển các khái niệm này thành câu hỏi về tình huống thực tế và quyết định kinh doanh.
+
+Không bắt buộc người dùng cung cấp tên doanh nghiệp, mã số thuế, doanh thu chính xác hoặc các thông tin tài chính bí mật.
+
+III. CẤU TRÚC CÁC TRANG
+
+1. Trang chủ
+
+Trang chủ cần có:
+
+* Tên và giới thiệu nền tảng.
+* Mô tả mục đích khảo sát.
+* Đối tượng có thể tham gia.
+* Thời lượng khảo sát dự kiến khoảng 5–8 phút.
+* Giới thiệu những nội dung người tham gia nhận được sau khi hoàn thành.
+* Nút “Bắt đầu khảo sát”.
+* Thông báo về quyền riêng tư, mục đích nghiên cứu và cách xử lý dữ liệu.
+
+Nội dung giới thiệu không được cam kết rằng hệ thống có thể dự báo chính xác lợi nhuận hoặc xác định chắc chắn khả năng thất bại của một doanh nghiệp.
+
+2. Màn hình nhập email và đồng ý xử lý dữ liệu
+
+Khi người dùng nhấn “Bắt đầu khảo sát”, yêu cầu nhập email trước khi hiển thị các câu hỏi.
+
+Trường email phải:
+
+* Bắt buộc nhập.
+* Kiểm tra định dạng email hợp lệ.
+* Hiển thị lỗi dễ hiểu khi dữ liệu không hợp lệ.
+* Không yêu cầu thông tin không cần thiết.
+* Không đưa email vào URL hoặc công khai trên báo cáo.
+
+Hiển thị thông báo về việc thu thập và sử dụng dữ liệu, bao gồm:
+
+* Mục đích nghiên cứu khoa học.
+* Loại dữ liệu được thu thập.
+* Việc lưu trữ câu trả lời trong Google Sheets do người nghiên cứu quản lý.
+* Mục đích sử dụng kết quả tổng hợp.
+* Thời hạn lưu trữ dự kiến và đầu mối liên hệ xử lý yêu cầu về dữ liệu.
+* Cách yêu cầu truy cập, chỉnh sửa, rút lại sự đồng ý hoặc yêu cầu xóa dữ liệu theo quy định áp dụng.
+
+Tạo ô đồng ý xử lý dữ liệu phục vụ nghiên cứu. Ô này không được chọn sẵn. Lưu lại thời điểm đồng ý và phiên bản thông báo đã được chấp thuận.
+
+Nếu người dùng không đồng ý, không tiếp tục thu thập dữ liệu nghiên cứu.
+
+Không mặc định sử dụng email để gửi quảng cáo hoặc tiếp thị. Nếu cần liên lạc tiếp trong tương lai, hãy tách thành một lựa chọn đồng ý riêng.
+
+3. Trang khảo sát 15 câu hỏi
+
+* Hiển thị từng câu hỏi theo từng bước hoặc theo các nhóm nội dung ngắn.
+* Có thanh tiến độ khảo sát.
+* Có nút quay lại để chỉnh sửa câu trả lời.
+* Bắt buộc hoàn thành các trường cần thiết hoặc chọn “Chưa biết/Chưa theo dõi” tại những câu có phương án này.
+* Cho phép người dùng kiểm tra lại câu trả lời trước khi gửi.
+* Không tính điểm hồ sơ doanh nghiệp như một chỉ báo rủi ro.
+* Không tự gửi dữ liệu khi người dùng mới chọn đáp án.
+* Phải hiển thị trang xác nhận trước khi gửi khảo sát.
+
+4. Trang kết quả và dashboard cá nhân
+
+Chỉ hiển thị trạng thái “Đã ghi nhận khảo sát” sau khi máy chủ xác nhận dữ liệu đã được lưu thành công.
+
+Dashboard cần hiển thị:
+
+* Chỉ số mức độ cần chú ý tổng thể.
+* Điểm của từng nhóm nội dung.
+* Biểu đồ thể hiện mức độ cần chú ý.
+* Những vấn đề cần ưu tiên xác minh và khắc phục.
+* Căn cứ từ câu trả lời cụ thể.
+* Đề xuất hành động ngắn hạn và dài hạn.
+* Báo cáo định hướng tương lai theo kịch bản.
+* Nút tải hoặc in báo cáo PDF.
+
+Nếu lưu dữ liệu thất bại, hiển thị lỗi và nút thử lại. Không tạo một bản ghi khảo sát mới mỗi khi thử lại cùng một lần gửi.
+
+5. Trang đóng góp ý kiến
+
+Hiển thị sau báo cáo để người tham gia phản hồi mức độ hữu ích và bổ sung thông tin thực tế.
+
+Câu trả lời phản hồi phải được liên kết với mã khảo sát, nhưng không được tự động thay đổi điểm số đã tính. Nếu người tham gia bổ sung dữ liệu mới, hãy lưu phần bổ sung như một bản ghi riêng.
+
+6. Trang quản trị nghiên cứu
+
+Tạo phân hệ quản trị riêng, chỉ cho phép người có quyền được cấp truy cập.
+
+Chức năng:
+
+* Thống kê số lượng khảo sát đã hoàn thành.
+* Thống kê theo loại hình kinh doanh, ngành nghề, quy mô và thời gian hoạt động.
+* Xem phân phối các mức độ cần chú ý.
+* Xem điểm trung bình của từng nhóm nội dung.
+* Lọc theo ngày khảo sát.
+* Xuất dữ liệu khảo sát phục vụ phân tích bằng Excel, CSV hoặc phần mềm thống kê.
+* Theo dõi bản ghi lỗi, bản ghi thiếu dữ liệu và phiên bản bộ câu hỏi.
+* Xem phản hồi sau báo cáo.
+* Kiểm tra chất lượng dữ liệu.
+
+Không cho phép người khảo sát thông thường xem toàn bộ dữ liệu của những người khác.
+
+Không cung cấp API công khai để đọc danh sách email hoặc câu trả lời cá nhân.
+
+⸻
+
+IV. BỘ KHẢO SÁT CHÍNH THỨC GỒM 15 CÂU
+
+Thiết kế các câu hỏi dưới đây bằng tiếng Việt tự nhiên, dễ hiểu, có lựa chọn rõ ràng. Đây là 15 câu hỏi khảo sát chính; phần góp ý sau báo cáo không nằm trong số lượng này.
+
+Nhóm A — Thông tin nền về hoạt động kinh doanh
+
+Câu 1. Loại hình hoạt động của bạn là gì?
+
+* Doanh nghiệp/công ty.
+* Hộ kinh doanh.
+* Cá nhân kinh doanh/tự kinh doanh.
+* Khác.
+
+Trường này dùng để phân loại mẫu nghiên cứu, không tính điểm rủi ro.
+
+Câu 2. Hoạt động kinh doanh của bạn thuộc ngành nào?
+
+* Bán lẻ/bán buôn.
+* Sản xuất/chế biến.
+* Nhà hàng/ăn uống/lưu trú.
+* Dịch vụ chuyên môn.
+* Công nghệ/thương mại điện tử.
+* Xây dựng/bất động sản.
+* Vận tải/logistics.
+* Nông nghiệp.
+* Giáo dục/y tế.
+* Ngành khác.
+
+Cho phép chọn “Khác” và nhập tên ngành.
+
+Câu 3. Hoạt động kinh doanh đã diễn ra trong bao lâu?
+
+* Dưới 1 năm.
+* Từ 1 đến dưới 3 năm.
+* Từ 3 đến dưới 7 năm.
+* Từ 7 năm trở lên.
+
+Dùng để phân nhóm giai đoạn hoạt động, không tính điểm rủi ro.
+
+Câu 4. Quy mô nhân sự hiện tại của hoạt động kinh doanh là bao nhiêu?
+
+* Chỉ có cá nhân chủ kinh doanh.
+* Từ 2–5 người.
+* Từ 6–20 người.
+* Từ 21–100 người.
+* Trên 100 người.
+* Không muốn cung cấp thông tin.
+
+Không bắt buộc cung cấp doanh thu chính xác.
+
+Nhóm B — Nhu cầu, thị trường và khách hàng
+
+Câu 5. Trong 6–12 tháng gần nhất, tình hình nhu cầu của khách hàng đối với sản phẩm hoặc dịch vụ của bạn thay đổi như thế nào?
+
+* Tăng rõ rệt.
+* Tăng nhẹ.
+* Tương đối ổn định.
+* Giảm nhẹ.
+* Giảm rõ rệt.
+* Biến động khó dự đoán.
+* Chưa theo dõi được.
+
+Mục đích: phản ánh xu hướng cầu và khả năng nhận biết thay đổi của thị trường.
+
+Câu 6. Khi bạn tăng giá bán ở mức vừa phải, khách hàng thường phản ứng như thế nào?
+
+* Phần lớn vẫn tiếp tục mua.
+* Một số khách hàng giảm mua hoặc chuyển sang lựa chọn khác.
+* Nhiều khách hàng chuyển sang đối thủ cạnh tranh.
+* Doanh số có xu hướng giảm mạnh khi tăng giá.
+* Chưa từng theo dõi hoặc chưa có đủ dữ liệu.
+
+Mục đích: nhận diện mức độ nhạy cảm của khách hàng với giá bán và nguy cơ mất khách khi điều chỉnh giá. Không được tuyên bố đây là phép đo chính xác độ co giãn của cầu nếu không có dữ liệu giá và lượng bán tương ứng.
+
+Nhóm C — Nguồn cung, chi phí và hiệu quả vận hành
+
+Câu 7. Chi phí đầu vào, nguồn hàng hoặc việc cung ứng nguyên liệu ảnh hưởng đến hoạt động kinh doanh của bạn như thế nào?
+
+* Nguồn cung tương đối ổn định, tác động đến hoạt động không đáng kể.
+* Có biến động nhưng có thể xử lý bằng nguồn cung hoặc phương án thay thế.
+* Giá đầu vào hoặc nguồn hàng biến động thường xuyên, ảnh hưởng đến lợi nhuận.
+* Phụ thuộc lớn vào một số nhà cung cấp hoặc nguồn đầu vào khó thay thế.
+* Chưa theo dõi được mức độ ảnh hưởng.
+
+Mục đích: nhận diện nguy cơ từ nguồn cung, chi phí và sự phụ thuộc vào đối tác.
+
+Câu 8. Bạn kiểm soát chi phí và lợi nhuận của sản phẩm/dịch vụ ở mức độ nào?
+
+* Theo dõi được các nhóm chi phí và thường xuyên tính chi phí trên một đơn vị sản phẩm/dịch vụ, kèm biên lợi nhuận.
+* Theo dõi tổng doanh thu và tổng chi phí nhưng chưa phân tích thường xuyên theo từng sản phẩm/dịch vụ.
+* Chỉ ước tính chi phí và lợi nhuận khi cần.
+* Hầu như chưa theo dõi được chi phí thực tế và lợi nhuận.
+* Chưa có đủ thông tin để đánh giá.
+
+Mục đích: phản ánh mức độ kiểm soát chi phí và thông tin phục vụ quyết định quản trị.
+
+Câu 9. Khi tăng thêm nhân sự, vốn, thiết bị hoặc các nguồn lực khác, hiệu quả hoạt động của bạn thường thay đổi như thế nào?
+
+* Hiệu quả hoặc sản lượng tăng tốt so với nguồn lực bổ sung.
+* Sản lượng tăng tương đối tương ứng với mức tăng nguồn lực.
+* Sản lượng vẫn tăng nhưng hiệu quả tăng thêm giảm dần.
+* Chi phí tăng nhanh hơn kết quả thu được.
+* Chưa theo dõi hoặc chưa đủ dữ liệu.
+
+Mục đích: phát hiện dấu hiệu sử dụng nguồn lực chưa hiệu quả và nhu cầu xem xét năng suất biên, quy mô hoạt động. Câu trả lời chỉ là chỉ báo tự đánh giá, không thay thế phép đo năng suất thực tế.
+
+Nhóm D — Định giá và cạnh tranh
+
+Câu 10. Bạn thường căn cứ vào đâu khi quyết định giá bán sản phẩm hoặc dịch vụ?
+
+Cho phép chọn tối đa 3 phương án:
+
+* Chi phí thực tế và mức lợi nhuận mục tiêu.
+* Mức sẵn lòng chi trả và nhu cầu của khách hàng.
+* Giá của đối thủ cạnh tranh.
+* Chất lượng, thương hiệu và giá trị khác biệt của sản phẩm/dịch vụ.
+* Tính mùa vụ và biến động thị trường.
+* Chủ yếu dựa vào kinh nghiệm hoặc cảm tính.
+* Chưa có phương pháp định giá tương đối rõ ràng.
+
+Mục đích: đánh giá cơ sở ra quyết định giá. Không giả định mọi ngành đều có cùng cách định giá tối ưu.
+
+Câu 11. Mức độ cạnh tranh trong thị trường của bạn hiện nay như thế nào?
+
+* Có sự khác biệt rõ về sản phẩm/dịch vụ và nhóm khách hàng tương đối trung thành.
+* Cạnh tranh ở mức vừa phải, vẫn có điểm khác biệt để thu hút khách hàng.
+* Có nhiều đối thủ nhưng vẫn tạo được một số khác biệt.
+* Có nhiều sản phẩm/dịch vụ thay thế gần giống nhau, khách hàng chủ yếu so sánh giá.
+* Chưa nắm rõ tình hình đối thủ.
+
+Mục đích: nhận diện áp lực cạnh tranh và khả năng khác biệt hóa. Không tự động kết luận một doanh nghiệp thuộc thị trường độc quyền, cạnh tranh hoàn toàn hay độc quyền nhóm chỉ dựa trên câu trả lời này.
+
+Nhóm E — Chiến lược, thông tin và kiểm soát
+
+Câu 12. Khi đưa ra quyết định quan trọng như thay đổi giá, khuyến mãi hoặc mở rộng kinh doanh, bạn xử lý phản ứng của đối thủ như thế nào?
+
+* Chủ động xem xét nhiều kịch bản, phản ứng có thể xảy ra và tác động đến chi phí/lợi nhuận.
+* Theo dõi đối thủ thường xuyên và đánh giá kết quả các quyết định.
+* Chủ yếu điều chỉnh sau khi đối thủ đã hành động.
+* Thường làm theo giá hoặc chương trình khuyến mãi của đối thủ mà chưa đánh giá đầy đủ hiệu quả.
+* Chưa có cách theo dõi hoặc đánh giá rõ ràng.
+
+Mục đích: đánh giá mức độ ra quyết định chiến lược và khả năng xem xét sự phụ thuộc lẫn nhau giữa các bên trên thị trường.
+
+Câu 13. Khách hàng có được cung cấp đủ thông tin đáng tin cậy để hiểu và đánh giá sản phẩm/dịch vụ của bạn hay không?
+
+* Thông tin về chất lượng, đặc điểm, giá, điều kiện giao dịch được công bố rõ; có cơ chế tiếp nhận và xử lý phản hồi.
+* Phần lớn thông tin rõ ràng nhưng một số nội dung chưa nhất quán.
+* Khách hàng đôi khi hiểu nhầm hoặc khó xác minh chất lượng thực tế.
+* Chưa có cách cung cấp và kiểm soát thông tin sản phẩm/dịch vụ tương đối rõ ràng.
+* Chưa đánh giá được.
+
+Mục đích: nhận diện vấn đề về minh bạch thông tin, tín hiệu chất lượng và niềm tin thị trường.
+
+Câu 14. Hoạt động kinh doanh của bạn có quy trình theo dõi trách nhiệm, đánh giá kết quả và kiểm soát sai sót như thế nào?
+
+* Trách nhiệm được phân định, có tiêu chí đánh giá và kiểm tra định kỳ; các khuyến khích được xem xét để hạn chế hành vi gây hại cho hoạt động chung.
+* Có phân công và theo dõi nhưng chưa nhất quán hoặc chưa thường xuyên.
+* Nhiều hoạt động phụ thuộc vào kinh nghiệm cá nhân; quy trình kiểm tra và đánh giá còn hạn chế.
+* Sai sót lặp lại, thiếu theo dõi hoặc chưa có cơ chế kiểm soát phù hợp.
+* Chưa đánh giá được.
+
+Câu hỏi được thiết kế để người kinh doanh một mình vẫn có thể trả lời về quy trình tự kiểm soát, kiểm tra chất lượng và quản lý đối tác. Không yêu cầu họ phải có bộ phận nhân sự.
+
+Mục đích: nhận diện điểm yếu về quản trị, giám sát, khuyến khích và rủi ro phát sinh khi thông tin hoặc lợi ích giữa các bên không đồng nhất.
+
+Nhóm F — Phát triển bền vững
+
+Câu 15. Khi ra quyết định kinh doanh trong dài hạn, bạn cân nhắc các yếu tố kinh tế, con người và môi trường ở mức độ nào?
+
+* Thường xem xét đồng thời khả năng sinh lời, lợi ích khách hàng/người lao động và việc sử dụng nguồn lực, tác động môi trường dài hạn.
+* Có quan tâm đến hiệu quả tài chính và con người nhưng chưa đánh giá đầy đủ các tác động khác.
+* Chủ yếu ưu tiên kết quả ngắn hạn; chưa có cách đánh giá tác động dài hạn rõ ràng.
+* Ít quan tâm hoặc chưa có biện pháp xử lý các vấn đề về lãng phí nguồn lực và tác động dài hạn.
+* Chưa theo dõi hoặc chưa đánh giá được.
+
+Mục đích: phản ánh mức độ cân nhắc giữa kết quả kinh tế trước mắt và khả năng phát triển bền vững.
+
+⸻
+
+V. LOGIC TÍNH ĐIỂM VÀ PHÂN TÍCH
+
+Phải xây dựng thuật toán ở một module riêng, có thể kiểm thử bằng unit test. Không đặt toàn bộ công thức trực tiếp trong component giao diện.
+
+1. Nguyên tắc
+
+* Câu 1–4 là dữ liệu phân nhóm, không tính điểm.
+* Câu 5–15 là 11 chỉ báo chẩn đoán.
+* Điểm cao hơn nghĩa là mức độ cần chú ý cao hơn theo tiêu chí khảo sát, không đồng nghĩa với xác suất thất bại.
+* Mỗi câu cần có bảng quy đổi điểm, lý do quy đổi và quy tắc xử lý dữ liệu thiếu.
+* Các câu trả lời “Chưa biết/Chưa theo dõi” có thể phản ánh thiếu thông tin quản trị. Phân biệt chúng với dữ liệu bị bỏ trống hoặc câu hỏi không áp dụng.
+* Không được tự động coi dữ liệu thiếu là rủi ro cao.
+
+2. Quy đổi điểm cho câu 5–9 và câu 11–15
+
+Sử dụng thang điểm từ 1 đến 5:
+
+* 1: Mức độ cần chú ý thấp.
+* 2: Mức độ cần chú ý tương đối thấp.
+* 3: Mức độ cần chú ý trung bình.
+* 4: Mức độ cần chú ý cao.
+* 5: Mức độ cần chú ý rất cao.
+
+Áp dụng bảng quy đổi cụ thể dưới đây:
+
+Câu 5 — Xu hướng nhu cầu
+
+* Tăng rõ rệt: 1.
+* Tăng nhẹ: 1.
+* Ổn định: 2.
+* Giảm nhẹ: 3.
+* Giảm rõ rệt: 4.
+* Biến động khó dự đoán: 4.
+* Chưa theo dõi được: 4.
+
+Câu 6 — Phản ứng của khách hàng với giá
+
+* Phần lớn vẫn tiếp tục mua: 1.
+* Một số khách hàng giảm mua/chuyển đổi: 3.
+* Nhiều khách hàng chuyển sang đối thủ: 4.
+* Doanh số giảm mạnh khi tăng giá: 5.
+* Chưa theo dõi: 4.
+
+Câu 7 — Nguồn cung và chi phí đầu vào
+
+* Ổn định, tác động thấp: 1.
+* Có biến động nhưng xử lý được: 2.
+* Biến động thường xuyên, ảnh hưởng lợi nhuận: 4.
+* Phụ thuộc lớn vào nguồn đầu vào khó thay thế: 5.
+* Chưa theo dõi: 4.
+
+Câu 8 — Kiểm soát chi phí
+
+* Có thể theo dõi chi phí trên đơn vị và biên lợi nhuận thường xuyên: 1.
+* Theo dõi tổng doanh thu và tổng chi phí: 3.
+* Chỉ ước tính khi cần: 4.
+* Hầu như chưa theo dõi: 5.
+* Chưa đủ thông tin: 4.
+
+Câu 9 — Hiệu quả sử dụng nguồn lực
+
+* Hiệu quả tăng tốt so với nguồn lực bổ sung: 1.
+* Sản lượng tăng tương ứng với nguồn lực: 2.
+* Hiệu quả tăng thêm giảm dần: 4.
+* Chi phí tăng nhanh hơn kết quả: 5.
+* Chưa theo dõi: 4.
+
+Câu 11 — Áp lực cạnh tranh
+
+* Khác biệt rõ, khách hàng tương đối trung thành: 1.
+* Cạnh tranh vừa phải, có điểm khác biệt: 2.
+* Nhiều đối thủ, vẫn có điểm khác biệt: 3.
+* Nhiều sản phẩm thay thế và cạnh tranh chủ yếu bằng giá: 5.
+* Chưa nắm rõ tình hình: 4.
+
+Câu 12 — Phản ứng chiến lược
+
+* Phân tích kịch bản và phản ứng đối thủ trước quyết định: 1.
+* Theo dõi và đánh giá đối thủ thường xuyên: 2.
+* Chủ yếu phản ứng sau đối thủ: 4.
+* Sao chép giá hoặc khuyến mãi mà chưa đánh giá hiệu quả: 5.
+* Chưa có cách theo dõi: 4.
+
+Câu 13 — Minh bạch thông tin
+
+* Thông tin rõ ràng, nhất quán và có cơ chế xử lý phản hồi: 1.
+* Phần lớn rõ ràng nhưng chưa nhất quán hoàn toàn: 2.
+* Khách hàng đôi khi không hiểu hoặc khó xác minh chất lượng: 4.
+* Chưa có cách cung cấp/kiểm soát thông tin phù hợp: 5.
+* Chưa đánh giá được: 4.
+
+Câu 14 — Quản trị và kiểm soát
+
+* Có phân công, đánh giá, kiểm tra định kỳ phù hợp: 1.
+* Có quy trình nhưng thực hiện chưa nhất quán: 3.
+* Phụ thuộc nhiều vào cá nhân, thiếu theo dõi: 4.
+* Sai sót lặp lại và thiếu cơ chế kiểm soát: 5.
+* Chưa đánh giá được: 4.
+
+Câu 15 — Phát triển bền vững
+
+* Cân nhắc đồng thời hiệu quả kinh tế, con người và tác động môi trường dài hạn: 1.
+* Quan tâm đến tài chính và con người nhưng chưa đầy đủ các khía cạnh khác: 2.
+* Chủ yếu ưu tiên kết quả ngắn hạn: 4.
+* Chưa quan tâm hoặc chưa xử lý tác động dài hạn, lãng phí nguồn lực: 5.
+* Chưa đánh giá được: 4.
+
+Những mức quy đổi trên là quy ước chẩn đoán ban đầu của công cụ, không được mô tả là thang đo đã được kiểm định khoa học.
+
+3. Quy tắc tính điểm cho câu 10
+
+Câu 10 cho chọn tối đa 3 yếu tố định giá. Phải đánh giá tổ hợp câu trả lời bằng quy tắc xác định:
+
+* Nếu có chi phí thực tế và ít nhất một yếu tố thị trường như nhu cầu, giá đối thủ hoặc giá trị khác biệt: điểm 1.
+* Nếu kết hợp ít nhất hai yếu tố thị trường nhưng chưa có chi phí làm căn cứ: điểm 2.
+* Nếu chỉ có yếu tố chi phí: điểm 3.
+* Nếu chỉ dựa trên một yếu tố đơn lẻ và thiếu đánh giá bổ sung: điểm 4.
+* Nếu chủ yếu dựa vào cảm tính, không có phương pháp hoặc không có thông tin cần thiết để định giá: điểm 5.
+
+Nếu tổ hợp câu trả lời mâu thuẫn hoặc không đủ để xếp loại, đánh dấu cần xem xét, không tự suy diễn.
+
+4. Chuẩn hóa chỉ số
+
+Với mỗi câu có điểm hợp lệ từ 1 đến 5, chuẩn hóa sang thang 0–100:
+
+Chỉ số câu hỏi = (Điểm câu trả lời − 1) / 4 × 100.
+
+Ví dụ:
+
+* Điểm 1 tương ứng 0.
+* Điểm 2 tương ứng 25.
+* Điểm 3 tương ứng 50.
+* Điểm 4 tương ứng 75.
+* Điểm 5 tương ứng 100.
+
+Gọi kết quả này là chỉ số mức độ cần chú ý, không gọi là xác suất rủi ro hoặc xác suất phá sản.
+
+5. Nhóm chỉ báo
+
+Tính điểm trung bình cho các nhóm:
+
+* Nhu cầu và thị trường: câu 5, 6, 11, 12.
+* Nguồn cung và vận hành: câu 7, 8, 9.
+* Phương pháp định giá: câu 10.
+* Thông tin và quản trị: câu 13, 14.
+* Phát triển bền vững: câu 15.
+
+Điểm mỗi nhóm bằng trung bình các chỉ số câu hỏi hợp lệ trong nhóm đó.
+
+Chỉ số tổng thể bằng trung bình của các chỉ số câu 5–15 có điểm hợp lệ, mỗi câu có trọng số như nhau. Không tính điểm hồ sơ ở câu 1–4.
+
+Nếu có ít hơn 8 câu hợp lệ trong tổng số 11 câu chẩn đoán, không hiển thị chỉ số tổng thể; thay vào đó, thông báo rằng dữ liệu chưa đủ theo quy tắc của hệ thống. Đối với từng nhóm, luôn hiển thị số câu đã được sử dụng để tính điểm.
+
+6. Phân loại mức độ cần chú ý
+
+Dựa trên chỉ số 0–100:
+
+* 0–24: Mức độ cần chú ý thấp.
+* 25–49: Mức độ cần chú ý trung bình.
+* 50–74: Mức độ cần chú ý cao.
+* 75–100: Mức độ cần chú ý rất cao.
+
+Đây là các ngưỡng vận hành ban đầu nhằm ưu tiên những vấn đề cần xem xét. Không được khẳng định rằng ngưỡng đã được kiểm định hoặc có ý nghĩa thống kê nếu chưa thực hiện nghiên cứu xác nhận.
+
+7. Cách đưa ra khuyến nghị
+
+Các khuyến nghị phải dựa trên câu trả lời và điểm chỉ báo tương ứng.
+
+Ví dụ:
+
+* Nếu câu 5 cho thấy nhu cầu giảm và câu 6 cho thấy khách hàng phản ứng mạnh với giá: đề xuất rà soát phân khúc khách hàng, sản phẩm thay thế, chính sách giá và các chỉ báo cầu.
+* Nếu câu 7 cho thấy phụ thuộc lớn vào nguồn cung: đề xuất đánh giá nhà cung cấp thay thế, mức độ tập trung nguồn cung và phương án dự phòng.
+* Nếu câu 8 cho thấy chưa theo dõi chi phí theo sản phẩm: đề xuất xây dựng bảng chi phí cố định, chi phí biến đổi, chi phí đơn vị và biên lợi nhuận.
+* Nếu câu 9 cho thấy hiệu quả tăng thêm giảm: đề xuất đo năng suất và đánh giá hiệu quả tăng nguồn lực trước khi mở rộng thêm.
+* Nếu câu 10 cho thấy thiếu căn cứ định giá: đề xuất kết hợp chi phí, mức sẵn lòng chi trả, đối thủ, giá trị khác biệt và phản ứng của khách hàng.
+* Nếu câu 12 có mức cần chú ý cao: đề xuất xây dựng các kịch bản phản ứng cạnh tranh và đánh giá hậu quả của từng phương án.
+* Nếu câu 13 cho thấy thông tin thiếu minh bạch: đề xuất chuẩn hóa mô tả sản phẩm/dịch vụ, điều kiện giao dịch và cơ chế xử lý phản hồi.
+* Nếu câu 14 cho thấy thiếu kiểm soát: đề xuất phân định trách nhiệm, tiêu chí đánh giá, kiểm tra định kỳ và cơ chế khuyến khích phù hợp.
+* Nếu câu 15 có mức cần chú ý cao: đề xuất rà soát rủi ro dài hạn về nguồn lực, người lao động, khách hàng và tác động môi trường.
+
+Không được dùng cùng một khuyến nghị chung cho mọi trường hợp. Mỗi khuyến nghị phải nêu căn cứ liên quan đến câu trả lời.
+
+⸻
+
+VI. THIẾT KẾ BÁO CÁO SAU KHẢO SÁT
+
+Báo cáo phải có chất lượng như một bản phân tích quản trị sơ bộ.
+
+Phần 1 — Tóm tắt điều hành
+
+Hiển thị:
+
+* Loại hình và ngành kinh doanh.
+* Thời gian hoạt động.
+* Số câu trả lời hợp lệ đã được dùng tính điểm.
+* Chỉ số tổng thể nếu đủ dữ liệu.
+* Ba vấn đề ưu tiên cần xem xét.
+* Điểm mạnh hoặc yếu tố thuận lợi thể hiện trong các câu trả lời.
+
+Phần 2 — Dashboard chi tiết
+
+Sử dụng biểu đồ thanh thể hiện điểm của năm nhóm chỉ báo, kèm số lượng câu trả lời được dùng để tính mỗi nhóm.
+
+Có thể sử dụng biểu đồ radar nếu có ít nhất ba nhóm điểm hợp lệ. Phải chú thích rõ:
+
+* Điểm thấp là mức độ cần chú ý thấp theo các câu trả lời.
+* Điểm cao là mức độ cần chú ý cao.
+* Điểm không phải xác suất thất bại.
+
+Mỗi biểu đồ phải có tiêu đề, nhãn dữ liệu và giải thích ngắn. Trên điện thoại, biểu đồ không được bị cắt hoặc tràn màn hình.
+
+Phần 3 — Phân tích vấn đề
+
+Mỗi vấn đề phải trình bày theo cấu trúc:
+
+1. Nội dung quan sát được từ câu trả lời.
+2. Ý nghĩa quản trị hoặc khái niệm kinh tế học có liên quan.
+3. Rủi ro tiềm tàng hoặc vấn đề cần kiểm chứng.
+4. Dữ liệu bổ sung nên thu thập.
+5. Hành động đề xuất.
+
+Tách biệt rõ:
+
+* Dữ kiện trực tiếp từ câu trả lời.
+* Cách diễn giải của hệ thống.
+* Giả thuyết về nguyên nhân.
+* Khuyến nghị cần được người quản lý kiểm tra.
+
+Không tự khẳng định nguyên nhân khi người khảo sát chưa cung cấp dữ liệu chứng minh.
+
+Phần 4 — Định hướng tương lai
+
+Đưa ra định hướng theo ba mốc:
+
+Trong 30 ngày: Xử lý những điểm yếu về thông tin, kiểm soát hoặc hiệu quả cần được xác minh ngay.
+
+Trong 90 ngày: Đề xuất những cải tiến về quy trình, quản trị chi phí, định giá, đo lường nhu cầu hoặc quản lý rủi ro.
+
+Trong 12 tháng: Đề xuất các ưu tiên nâng cao năng lực cạnh tranh, tăng khả năng thích ứng thị trường và phát triển bền vững.
+
+Tạo các kịch bản định tính:
+
+* Kịch bản thuận lợi.
+* Kịch bản cơ sở.
+* Kịch bản bất lợi.
+
+Mỗi kịch bản phải giải thích những điều kiện có thể dẫn đến tình huống đó và những chỉ báo nên theo dõi. Không tự gán xác suất, mức tăng doanh thu hoặc mức tăng lợi nhuận khi chưa có dữ liệu thích hợp.
+
+Không khẳng định những kịch bản này là dự báo thống kê.
+
+Phần 5 — Hạn chế của báo cáo
+
+Hiển thị thông báo:
+
+“Báo cáo được xây dựng từ thông tin tự đánh giá của người tham gia và một bộ chỉ báo chẩn đoán ban đầu. Kết quả không thay thế báo cáo tài chính, kiểm toán, nghiên cứu thị trường chuyên sâu hoặc tư vấn chuyên ngành. Những vấn đề được nêu là các tín hiệu cần xem xét, không phải kết luận chắc chắn về tình trạng hay tương lai của hoạt động kinh doanh.”
+
+Phần 6 — Xuất báo cáo
+
+Cung cấp:
+
+* Nút “Tải/In báo cáo PDF”.
+* Nút “Sao chép tóm tắt”.
+* Nút “Đóng góp ý kiến”.
+* Ngày khảo sát và mã tham chiếu báo cáo.
+
+Báo cáo cá nhân không được chứa địa chỉ email hoặc thông tin nhận diện không cần thiết.
+
+⸻
+
+VII. FORM GÓP Ý SAU BÁO CÁO
+
+Sau khi người dùng đọc báo cáo, hiển thị các nội dung:
+
+1. Mức độ hữu ích của báo cáo
+
+Thang đánh giá từ 1 đến 5, từ “Không hữu ích” đến “Rất hữu ích”.
+
+2. Mức độ phù hợp với tình hình thực tế
+
+* Phù hợp.
+* Phù hợp một phần.
+* Chưa phù hợp.
+* Tôi chưa đủ thông tin để đánh giá.
+
+3. Ba vấn đề cần ưu tiên nhất trong 12 tháng tới
+
+Cho phép chọn tối đa 3:
+
+* Nhu cầu và doanh số.
+* Cạnh tranh và khách hàng.
+* Giá bán và lợi nhuận.
+* Chi phí đầu vào và nguồn cung.
+* Hiệu quả vận hành và năng suất.
+* Quản trị tài chính và thông tin chi phí.
+* Nhân sự, phân công và kiểm soát.
+* Thông tin sản phẩm/dịch vụ và niềm tin khách hàng.
+* Công nghệ và chuyển đổi phương thức kinh doanh.
+* Nguồn lực và phát triển bền vững.
+* Khác.
+
+4. Ý kiến bổ sung
+
+Một trường văn bản tự do để người tham gia mô tả thêm thực trạng, vấn đề chưa được đề cập hoặc đề xuất cải thiện báo cáo.
+
+5. Đồng ý tham gia khảo sát nghiên cứu tiếp theo
+
+Là lựa chọn riêng, không được chọn sẵn và không bắt buộc.
+
+Lưu phản hồi gắn với mã khảo sát. Không ghi đè câu trả lời ban đầu.
+
+⸻
+
+VIII. GOOGLE SHEETS VÀ CẤU TRÚC DỮ LIỆU
+
+Tạo khả năng lưu dữ liệu thực vào một Google Spreadsheet do tôi quản lý.
+
+Phương án tích hợp
+
+Ưu tiên sử dụng máy chủ Node.js của Google AI Studio, Google Sheets API và thông tin xác thực phía máy chủ.
+
+Sử dụng biến cấu hình/secrets như:
+
+* GOOGLE_SHEETS_SPREADSHEET_ID
+* GOOGLE_SERVICE_ACCOUNT_EMAIL
+* GOOGLE_PRIVATE_KEY
+* ADMIN_EMAILS
+
+Tôi sẽ cấu hình các giá trị thật sau khi ứng dụng được tạo. Không tự tạo hoặc giả định rằng các thông tin xác thực này đã tồn tại.
+
+Không bao giờ đưa khóa riêng, access token, service account credentials hoặc quyền đọc toàn bộ dữ liệu vào mã frontend.
+
+Hãy hướng dẫn tôi tạo và cấu hình service account, bật Google Sheets API, cấp quyền chỉnh sửa spreadsheet cho tài khoản dịch vụ và nhập secrets vào môi trường phía máy chủ. Xử lý an toàn định dạng khóa riêng có chứa ký tự xuống dòng.
+
+Nếu môi trường triển khai không hỗ trợ trực tiếp cách tích hợp trên, hãy báo rõ giới hạn và đề xuất một adapter Google Apps Script ở phía máy chủ. Không tự động chuyển sang lưu dữ liệu giả.
+
+Cấu trúc các sheet
+
+**Sheet 1: **SurveyResponses
+
+Mỗi dòng là một lần khảo sát đã được chấp nhận và lưu thành công.
+
+Các trường:
+
+* response_id
+* submitted_at
+* instrument_version
+* consent_version
+* business_type
+* industry
+* business_age
+* employee_band
+* Các câu trả lời q05 đến q15
+* Điểm từng câu hợp lệ.
+* Điểm năm nhóm chỉ báo.
+* overall_attention_index
+* result_band
+* Số câu được dùng tính điểm.
+* Trạng thái dữ liệu.
+* Phiên bản thuật toán tính điểm.
+
+**Sheet 2: **RespondentContacts
+
+* response_id
+* email
+* consent_timestamp
+* consent_purpose
+* contact_permission
+* Thông tin cần thiết để xử lý yêu cầu về dữ liệu.
+
+Để thông tin email tách riêng với bộ câu trả lời trong cấu trúc lưu trữ, đồng thời hạn chế quyền truy cập sheet này. Lưu ý rằng hai sheet cùng liên kết qua response_id vẫn có thể tái liên kết, nên không được tuyên bố dữ liệu là hoàn toàn ẩn danh.
+
+**Sheet 3: **SurveyFeedback
+
+* feedback_id
+* response_id
+* submitted_at
+* Đánh giá mức độ hữu ích.
+* Đánh giá độ phù hợp.
+* Các lựa chọn ưu tiên 12 tháng.
+* Nội dung góp ý.
+* Đồng ý tham gia nghiên cứu tiếp theo.
+
+**Sheet 4: **StudyMetadata
+
+Lưu phiên bản bộ câu hỏi, codebook, tên biến, nhãn câu trả lời, quy tắc mã hóa, công thức tính điểm, phiên bản thuật toán và ghi chú về những thay đổi trong quá trình nghiên cứu.
+
+Yêu cầu lưu dữ liệu
+
+* Chỉ lưu bản khảo sát chính sau khi có sự đồng ý hợp lệ và người dùng gửi hoàn chỉnh.
+* Kiểm tra dữ liệu tại server, không chỉ kiểm tra ở frontend.
+* Mỗi lần khảo sát có một response_id duy nhất.
+* Có cơ chế idempotency để ngăn tạo bản ghi trùng khi gửi lại.
+* Lưu thời gian theo định dạng nhất quán, hiển thị theo múi giờ Việt Nam.
+* Xử lý lỗi mất mạng và giới hạn quota API rõ ràng.
+* Nếu lưu thất bại, hiển thị trạng thái chưa ghi nhận; cho phép gửi lại mà không nhân đôi bản ghi.
+* Không để dữ liệu khảo sát bị truy cập trực tiếp từ trình duyệt bằng URL Google Sheets công khai.
+* Không sử dụng email làm khóa nhận diện duy nhất của một lần khảo sát vì một email có thể thực hiện nhiều lần khảo sát.
+* Không tự ý thay đổi câu hỏi hoặc công thức của phiên bản khảo sát đã sử dụng trong các bản ghi cũ.
+
+Nếu chưa cấu hình được kết nối Google Sheets, tạo file SETUP.md mô tả từng bước chính xác. Chế độ demo nếu có phải được gắn nhãn “Dữ liệu demo — không lưu vào nghiên cứu”.
+
+⸻
+
+IX. BẢO MẬT VÀ PHÂN QUYỀN
+
+Tạo hai loại quyền:
+
+Người tham gia khảo sát
+
+* Chỉ được thực hiện khảo sát, xem báo cáo được trả về cho lần khảo sát của mình và gửi góp ý.
+* Không được xem email hoặc dữ liệu của người khác.
+* Không được xem dashboard quản trị.
+* Không được tải dữ liệu tổng thể của nghiên cứu.
+
+Quản trị viên
+
+* Được bảo vệ bằng cơ chế xác thực thực sự.
+* Danh sách email quản trị lưu trong cấu hình bảo mật phía máy chủ, không tin vào một giá trị isAdmin được gửi từ trình duyệt.
+* Mọi API truy vấn dữ liệu, thống kê và xuất dữ liệu đều phải kiểm tra quyền ở server.
+* Không dựa vào việc ẩn nút trên frontend để bảo vệ quyền truy cập.
+* Không để lộ thông tin xác thực hoặc nội dung nhạy cảm trong log.
+* Có kiểm soát quyền truy cập tối thiểu cần thiết.
+
+Cung cấp giao diện xử lý lỗi rõ ràng nhưng không làm lộ stack trace hoặc thông tin hệ thống cho người dùng thông thường.
+
+⸻
+
+X. DASHBOARD QUẢN TRỊ PHỤC VỤ NGHIÊN CỨU KHOA HỌC
+
+Dashboard quản trị phải phân biệt dữ liệu khảo sát cá nhân và thống kê tổng hợp.
+
+Hiển thị:
+
+* Tổng số bản khảo sát hợp lệ.
+* Số bản bị thiếu dữ liệu và số bản bị loại khỏi các phép tính.
+* Tỷ lệ hoàn thành.
+* Phân bố theo loại hình kinh doanh.
+* Phân bố theo ngành và thời gian hoạt động.
+* Điểm trung bình và phân phối từng chỉ báo.
+* Phân bố các nhóm mức độ cần chú ý.
+* Sự khác biệt giữa các nhóm đối tượng khi có đủ mẫu.
+* Số lượng và xu hướng câu trả lời theo thời gian.
+
+Mọi chỉ số tổng hợp cần ghi rõ cỡ mẫu. Không đưa ra kết luận rằng một nhóm tốt hơn hoặc kém hơn nhóm khác nếu không có đủ căn cứ.
+
+Không tự chạy kiểm định thống kê hoặc khẳng định quan hệ nhân quả từ các thống kê mô tả.
+
+Khi so sánh nhóm nhỏ, phải có quy tắc bảo vệ dữ liệu. Mặc định ẩn các thống kê theo phân nhóm có ít hơn 5 phản hồi, đồng thời nêu rằng ngưỡng này là một biện pháp vận hành ban đầu, không phải tiêu chuẩn đảm bảo ẩn danh tuyệt đối.
+
+Cho phép quản trị viên xuất dữ liệu được phép truy cập dưới dạng CSV để xử lý riêng bằng Excel hoặc phần mềm thống kê.
+
+Dữ liệu xuất phải có codebook và giải thích mã hóa. Tránh tự động xuất email cùng dữ liệu phân tích nếu không thật sự cần thiết.
+
+⸻
+
+XI. THIẾT KẾ GIAO DIỆN VÀ CÔNG NGHỆ
+
+Giao diện
+
+Thiết kế theo phong cách:
+
+* Chuyên nghiệp.
+* Hiện đại.
+* Tối giản.
+* Phù hợp với doanh nghiệp và mục đích nghiên cứu.
+* Không giống trang quảng cáo hoặc landing page bán hàng.
+* Font tiếng Việt dễ đọc.
+* Nền sáng, tương phản tốt và có phân cấp thông tin rõ ràng.
+
+Bố cục desktop và mobile phải được thiết kế thực sự đáp ứng nhiều kích thước màn hình, không chỉ thu nhỏ giao diện desktop.
+
+Tránh lạm dụng màu sắc, hiệu ứng chuyển động, thẻ thông tin và biểu đồ không cần thiết.
+
+Công nghệ
+
+Ưu tiên sử dụng:
+
+* React và TypeScript cho frontend.
+* Node.js server runtime trong Google AI Studio.
+* Recharts hoặc thư viện biểu đồ tương thích nếu cần.
+* Google Sheets API cho việc lưu dữ liệu nghiên cứu.
+* Xác thực phía server cho khu vực quản trị.
+* Một module riêng quản lý bộ câu hỏi và thang điểm.
+* Một module riêng tính toán kết quả.
+* Một service riêng quản lý việc ghi/đọc Google Sheets.
+
+Hãy lựa chọn thư viện phù hợp với môi trường dự án thực tế, tránh thêm dependency quá mức hoặc làm tăng độ phức tạp không cần thiết.
+
+Cấu trúc code gợi ý
+
+* src/config/survey.ts: câu hỏi, lựa chọn, mã hóa và cấu hình phiên bản.
+* src/lib/scoring.ts: hàm tính điểm, phân nhóm chỉ báo và kiểm tra dữ liệu.
+* src/lib/reportRules.ts: logic chọn khuyến nghị.
+* src/components/survey/: giao diện khảo sát.
+* src/components/dashboard/: biểu đồ và dashboard.
+* src/components/report/: báo cáo và xuất/in.
+* src/components/feedback/: biểu mẫu góp ý.
+* src/pages/admin/: màn hình quản trị.
+* server/: API, xác thực, xác thực dữ liệu và Google Sheets service.
+* SETUP.md: hướng dẫn cấu hình.
+* README.md: mô tả kiến trúc, cách chạy và cách triển khai.
+
+Đây là cấu trúc tham khảo, cần điều chỉnh theo dự án hiện có thay vì tạo các file trùng lặp.
+
+⸻
+
+XII. KIỂM THỬ TRƯỚC KHI HOÀN THÀNH
+
+Không được dừng ở bước tạo giao diện.
+
+Thực hiện kiểm tra tối thiểu các tình huống sau:
+
+1. Không thể bắt đầu khảo sát khi email sai định dạng hoặc chưa đồng ý xử lý dữ liệu.
+2. Tất cả 15 câu hỏi hiển thị đúng tiếng Việt và có đáp án đầy đủ.
+3. Không thể gửi khảo sát khi còn thiếu trường bắt buộc.
+4. Người dùng quay lại chỉnh sửa câu trả lời mà các đáp án khác không bị mất.
+5. Điểm câu hỏi và điểm nhóm được tính chính xác theo bảng quy đổi.
+6. Dữ liệu thiếu không bị chuyển thành điểm rủi ro một cách tự động.
+7. Điểm tổng thể không xuất hiện khi không đủ số câu hợp lệ.
+8. Những câu trả lời giống nhau phải tạo ra kết quả giống nhau khi dùng cùng phiên bản thuật toán.
+9. Người có quyền khảo sát không thể đọc dữ liệu khảo sát của người khác.
+10. Người không có quyền quản trị không thể gọi các API quản trị.
+11. Google Sheets ghi nhận dữ liệu thật khi cấu hình hợp lệ.
+12. Khi API thất bại, hệ thống không báo đã lưu thành công.
+13. Gửi lại cùng một lần khảo sát không tạo bản ghi trùng.
+14. Khảo sát và dashboard sử dụng được trên điện thoại.
+15. Nút tải/in báo cáo hoạt động và không bị cắt nội dung.
+16. Lỗi cấu hình Google Sheets được thông báo rõ ràng nhưng không lộ bí mật.
+17. Không có khóa API, khóa dịch vụ hoặc dữ liệu nhận diện trong frontend bundle hay log không cần thiết.
+
+Tạo unit test cho công thức tính điểm và logic phân loại. Tạo checklist kiểm tra thực tế sau khi triển khai.
+
+XIII. THỨ TỰ TRIỂN KHAI
+
+Để bảo đảm ứng dụng chạy ổn định, chia quá trình xây dựng thành các giai đoạn nhưng phải giữ nguyên một dự án thống nhất:
+
+Giai đoạn 1 — Nền tảng: Kiểm tra cấu trúc dự án, xây dựng trang chủ, màn hình email/đồng ý dữ liệu và biểu mẫu 15 câu hỏi.
+
+Giai đoạn 2 — Thuật toán: Triển khai module mã hóa câu trả lời, chuẩn hóa điểm, phân nhóm chỉ báo và viết unit test.
+
+Giai đoạn 3 — Dashboard và báo cáo: Hiển thị biểu đồ, giải thích kết quả và tạo khuyến nghị theo quy tắc xác định.
+
+Giai đoạn 4 — Google Sheets: Hoàn thành tích hợp lưu dữ liệu thật, phân quyền, xử lý lỗi và chống ghi trùng.
+
+Giai đoạn 5 — Góp ý và quản trị: Hoàn thiện form phản hồi, dashboard quản trị, thống kê tổng hợp và xuất dữ liệu.
+
+Giai đoạn 6 — Kiểm thử: Kiểm tra preview, sửa lỗi, kiểm tra responsive, xác minh công thức và hướng dẫn triển khai.
+
+Không viết lại toàn bộ dự án ở mỗi giai đoạn. Tiếp tục từ mã nguồn đang có và giữ các chức năng đã hoàn thành.
+
+Đầu ra bắt buộc
+
+Khi hoàn thành, hãy cung cấp:
+
+1. Ứng dụng chạy được trong preview.
+2. Mã nguồn đầy đủ của các tính năng đã triển khai.
+3. Google Sheets service đã được tích hợp hoặc cấu hình ở trạng thái sẵn sàng với hướng dẫn cụ thể.
+4. Bộ câu hỏi và công thức được lưu trong module có thể kiểm tra.
+5. Dashboard và báo cáo cá nhân hoạt động.
+6. Form góp ý được lưu riêng và liên kết với mã khảo sát.
+7. Phân hệ quản trị được bảo vệ.
+8. Các bài kiểm tra đã chạy và kết quả kiểm tra.
+9. File SETUP.md và README.md.
+10. Danh sách cụ thể những nội dung vẫn cần tôi cấu hình thủ công.
+
+Ưu tiên một hệ thống ổn định, minh bạch, có thể kiểm tra và phục vụ nghiên cứu khoa học lâu dài thay vì thêm tính năng AI phức tạp nhưng không có cơ sở dữ liệu hoặc không thể xác minh kết quả.
