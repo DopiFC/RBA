@@ -1,10 +1,11 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
+import type { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { dataStore } from './server/dataStore';
-import { configStore } from './server/configStore';
-import type { SurveySubmissionPayload, SurveyFeedbackPayload } from './src/types/survey';
+import { dataStore } from './server/dataStore.ts';
+import { configStore } from './server/configStore.ts';
+import type { SurveySubmissionPayload, SurveyFeedbackPayload } from './src/types/survey.ts';
 
 dotenv.config();
 

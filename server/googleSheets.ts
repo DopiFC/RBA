@@ -1,6 +1,6 @@
 import { google } from 'googleapis';
-import type { StoredSurveyRecord, StoredContactRecord, SurveyFeedbackPayload } from '../src/types/survey';
-import { INSTRUMENT_VERSION, CONSENT_VERSION, ALGORITHM_VERSION } from '../src/config/survey';
+import type { StoredSurveyRecord, StoredContactRecord, SurveyFeedbackPayload } from '../src/types/survey.ts';
+import { INSTRUMENT_VERSION, CONSENT_VERSION, ALGORITHM_VERSION } from '../src/config/survey.ts';
 
 export interface GoogleSheetsConfig {
   spreadsheetId?: string;

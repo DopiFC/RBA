@@ -3,7 +3,7 @@ import {
   INSTRUMENT_VERSION,
   INDICATOR_GROUPS,
   SURVEY_QUESTIONS,
-} from '../config/survey';
+} from '../config/survey.ts';
 import type {
   SurveyAnswers,
   SurveyScoringResult,
@@ -11,7 +11,7 @@ import type {
   IndicatorGroupKey,
   IndicatorGroupScore,
   ResultBand,
-} from '../types/survey';
+} from '../types/survey.ts';
 
 /**
  * Score Question 10 (Pricing Method) based on explicit combinatorial rules.

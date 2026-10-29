@@ -1,4 +1,4 @@
-import { googleSheetsService } from './googleSheets';
+import { googleSheetsService } from './googleSheets.ts';
 import type {
   StoredSurveyRecord,
   StoredContactRecord,
@@ -6,9 +6,9 @@ import type {
   SurveySubmissionPayload,
   AdminStatsResponse,
   IndicatorGroupKey,
-} from '../src/types/survey';
-import { calculateSurveyResults } from '../src/lib/scoring';
-import { ALGORITHM_VERSION, CONSENT_VERSION, INSTRUMENT_VERSION } from '../src/config/survey';
+} from '../src/types/survey.ts';
+import { calculateSurveyResults } from '../src/lib/scoring.ts';
+import { ALGORITHM_VERSION, CONSENT_VERSION, INSTRUMENT_VERSION } from '../src/config/survey.ts';
 
 class DataStore {
   private surveyRecords: StoredSurveyRecord[] = [];
