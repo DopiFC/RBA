@@ -14,8 +14,8 @@ export interface AppConfig {
 }
 
 const DEFAULT_CONFIG: AppConfig = {
-  spreadsheetId: '13t07Qp8vM-znpW23_zqlw1lAAAV08j1gD-4hJCdvOQ0',
-  spreadsheetUrl: 'https://docs.google.com/spreadsheets/d/13t07Qp8vM-znpW23_zqlw1lAAAV08j1gD-4hJCdvOQ0/edit?usp=sharing',
+  spreadsheetId: process.env.GOOGLE_SHEETS_SPREADSHEET_ID || '',
+  spreadsheetUrl: process.env.GOOGLE_SHEETS_SPREADSHEET_URL || '',
   appsScriptUrl: process.env.VITE_GOOGLE_APPS_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbxVN0LDgIB5PzS2ValE0TbZINZb2UponE4dZcWsQ-VZoROx1_82ldPY3zBaX3SPgHeM/exec',
 };
 

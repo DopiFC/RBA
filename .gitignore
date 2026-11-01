@@ -7,5 +7,7 @@ coverage/
 .env*
 !.env.example
 firebase-applet-config.json
+server/app-config.json
+public/assets/aistudio/
 *.key
 *.pem

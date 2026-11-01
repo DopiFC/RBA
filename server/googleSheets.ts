@@ -20,7 +20,7 @@ export class GoogleSheetsService {
   }
 
   private init() {
-    const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID || '13t07Qp8vM-znpW23_zqlw1lAAAV08j1gD-4hJCdvOQ0';
+    const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID;
     const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
     let privateKey = process.env.GOOGLE_PRIVATE_KEY;
 
