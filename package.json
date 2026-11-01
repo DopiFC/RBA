@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx server.ts",
     "start": "node server.ts",
-    "build": "vite build",
+    "build": "vite build && touch dist/.nojekyll && sed -i '/<script id=\"gh-root-redirect\">/,/<\\/script>/d' dist/index.html && rm -rf docs && cp -r dist docs && touch docs/.nojekyll",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit"

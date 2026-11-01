@@ -1,12 +1,18 @@
 export interface SurveyAnswers {
-  // Demographic / Group A (Q1 - Q4)
+  // Câu 1 mới: Thông tin nhận diện hoạt động kinh doanh (không tính điểm rủi ro)
+  business_name?: string;
+  business_location?: string;
+  respondent_role?: string;
+  business_website?: string;
+
+  // Demographic / Nhóm A (Q1 - Q4 cũ -> Câu 2 - 5)
   q01_business_type?: string;
   q02_industry?: string;
   q02_industry_other?: string;
   q03_business_age?: string;
   q04_employee_band?: string;
 
-  // Diagnostic Indicators (Q5 - Q15)
+  // Diagnostic Indicators (Q5 - Q15 cũ -> Câu 6 - 16)
   q05_demand_trend?: string;
   q06_price_sensitivity?: string;
   q07_supply_cost?: string;
@@ -18,6 +24,29 @@ export interface SurveyAnswers {
   q13_info_transparency?: string;
   q14_governance_control?: string;
   q15_sustainability?: string;
+
+  // 4 Câu hỏi tự luận chuyên sâu mới (Câu 17 - 20)
+  q16_business_description?: string;
+  q16?: string;
+  q17_challenges?: string;
+  q17?: string;
+  q18_competitors_advantage?: string;
+  q18?: string;
+  q19_future_plans?: string;
+  q19?: string;
+}
+
+export interface QualitativeAnalysisResult {
+  businessOverview: string;
+  keyIssuesObserved: string[];
+  rootCausesAnalysis: string[];
+  competitiveAssessment: string;
+  risksToVerify: string[];
+  roadmapThirtyToNinetyDays: string[];
+  roadmapTwelveMonths: string[];
+  sourceBasis?: string;
+  generatedByAi?: boolean;
+  isFallback?: boolean;
 }
 
 export type ResultBand = 'low' | 'moderate' | 'high' | 'very_high';
@@ -60,6 +89,7 @@ export interface SurveyScoringResult {
   keyStrengths: string[];
   scenarios: QualitativeScenarios;
   actionRoadmap: ActionRoadmap;
+  qualitativeAnalysis?: QualitativeAnalysisResult | null;
 }
 
 export interface DiagnosticIssue {
@@ -128,6 +158,10 @@ export interface StoredSurveyRecord {
   submitted_at: string;
   instrument_version: string;
   consent_version: string;
+  business_name?: string;
+  business_location?: string;
+  respondent_role?: string;
+  business_website?: string;
   business_type: string;
   industry: string;
   business_age: string;
@@ -143,6 +177,10 @@ export interface StoredSurveyRecord {
   q13: string;
   q14: string;
   q15: string;
+  q16?: string;
+  q17?: string;
+  q18?: string;
+  q19?: string;
   scores_individual: Record<string, number | null>;
   group_scores: Record<IndicatorGroupKey, number | null>;
   overall_attention_index: number | null;

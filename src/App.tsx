@@ -53,7 +53,7 @@ export default function App() {
     }
 
     // Compute and generate full diagnostic report
-    const fullReport = generateFullReport(answers, responseId, new Date().toISOString());
+    const fullReport = await generateFullReport(answers, responseId, new Date().toISOString());
     setReport(fullReport);
     setCurrentTab('report');
     window.scrollTo({ top: 0, behavior: 'smooth' });

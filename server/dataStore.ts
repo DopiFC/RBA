@@ -309,6 +309,10 @@ class DataStore {
       submitted_at: new Date().toISOString(),
       instrument_version: payload.consentVersion || INSTRUMENT_VERSION,
       consent_version: CONSENT_VERSION,
+      business_name: payload.answers.business_name || '',
+      business_location: payload.answers.business_location || '',
+      respondent_role: payload.answers.respondent_role || '',
+      business_website: payload.answers.business_website || '',
       business_type: payload.answers.q01_business_type || 'unspecified',
       industry: payload.answers.q02_industry === 'other'
         ? `other: ${payload.answers.q02_industry_other || ''}`
@@ -326,6 +330,10 @@ class DataStore {
       q13: payload.answers.q13_info_transparency || '',
       q14: payload.answers.q14_governance_control || '',
       q15: payload.answers.q15_sustainability || '',
+      q16: payload.answers.q16_business_description || payload.answers.q16 || '',
+      q17: payload.answers.q17_challenges || payload.answers.q17 || '',
+      q18: payload.answers.q18_competitors_advantage || payload.answers.q18 || '',
+      q19: payload.answers.q19_future_plans || payload.answers.q19 || '',
       scores_individual: indScores,
       group_scores: groupScores,
       overall_attention_index: scoringResult.overallAttentionIndex,

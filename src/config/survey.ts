@@ -1,4 +1,4 @@
-export const INSTRUMENT_VERSION = 'v1.0.0';
+export const INSTRUMENT_VERSION = 'v2.0.0';
 export const CONSENT_VERSION = 'v1.0.0';
 export const ALGORITHM_VERSION = 'RBA-ALGO-2026.1';
 
@@ -14,16 +14,28 @@ export interface QuestionDefinition {
   code: string;
   title: string;
   description?: string;
-  groupKey: 'demographic' | 'market' | 'operations' | 'pricing' | 'governance' | 'sustainability';
+  groupKey: 'demographic' | 'market' | 'operations' | 'pricing' | 'governance' | 'sustainability' | 'qualitative';
   groupTitle: string;
-  type: 'single' | 'multiple' | 'text';
+  type: 'single' | 'multiple' | 'text' | 'profile';
   maxSelect?: number;
   options?: QuestionOption[];
   allowOther?: boolean;
   isDiagnostic: boolean;
   theoreticalReference?: string;
   diagnosticObjective?: string;
+  hints?: string[];
+  placeholder?: string;
+  exampleSnippet?: string;
 }
+
+export const RESPONDENT_ROLES = [
+  { id: 'business_owner', label: 'Chủ doanh nghiệp' },
+  { id: 'household_owner', label: 'Chủ hộ kinh doanh' },
+  { id: 'manager', label: 'Quản lý / Giám đốc điều hành' },
+  { id: 'staff_in_charge', label: 'Nhân viên phụ trách' },
+  { id: 'individual_seller', label: 'Cá nhân tự kinh doanh' },
+  { id: 'other', label: 'Khác' },
+];
 
 export const INDICATOR_GROUPS: Record<
   'market' | 'operations' | 'pricing' | 'governance' | 'sustainability',
@@ -354,5 +366,92 @@ export const SURVEY_QUESTIONS: QuestionDefinition[] = [
       { id: 'neglect_sustainability', label: 'Ít quan tâm hoặc chưa có biện pháp xử lý các vấn đề về lãng phí nguồn lực và tác động dài hạn', score: 5 },
       { id: 'untracked', label: 'Chưa theo dõi hoặc chưa đánh giá được', score: 4, isUncertainty: true },
     ],
+  },
+
+  // --- NHÓM G: KHẢO SÁT CHUYÊN SÂU & THỰC TIỄN HOẠT ĐỘNG (Q16 - Q19) ---
+  {
+    id: 'q16',
+    code: 'business_description',
+    title: 'Câu 17. Mô tả hoạt động kinh doanh',
+    description: 'Anh/Chị vui lòng mô tả những sản phẩm hoặc dịch vụ chủ lực mà hoạt động kinh doanh đang cung cấp, nhóm khách hàng chính và phương thức bán hàng hiện tại.',
+    groupKey: 'qualitative',
+    groupTitle: 'Nhóm G — Khảo sát thực tế chuyên sâu',
+    type: 'text',
+    isDiagnostic: false,
+    hints: [
+      'Sản phẩm/dịch vụ chính đang mang lại nguồn thu cốt lõi.',
+      'Nhóm khách hàng mục tiêu (độ tuổi, thu nhập, hành vi hoặc doanh nghiệp B2B).',
+      'Kênh bán hàng: trực tiếp (cửa hàng/văn phòng), trực tuyến (sàn TMĐT, MXH) hay kết hợp.',
+      'Điểm nổi bật, thế mạnh khác biệt trong hoạt động kinh doanh.',
+    ],
+    placeholder: 'Nhập mô tả sản phẩm/dịch vụ chủ lực, khách hàng chính và kênh bán hàng (tối đa 1.500 ký tự)...',
+    exampleSnippet: 'Ví dụ: Chúng tôi bán lẻ thời trang nữ công sở qua cửa hàng trực tiếp tại Q.3 và kênh TikTok/Shopee. Khách hàng mục tiêu là nữ 24–35 tuổi. Điểm mạnh là mẫu mã tự thiết kế cập nhật hàng tuần.',
+  },
+  {
+    id: 'q17',
+    code: 'challenges',
+    title: 'Câu 18. Khó khăn thực tế trong hoạt động kinh doanh',
+    description: 'Theo Anh/Chị, 3 khó khăn lớn nhất mà hoạt động kinh doanh hiện đang gặp phải là gì? Những khó khăn này bắt đầu từ khi nào và ảnh hưởng như thế nào đến hoạt động thực tế?',
+    groupKey: 'qualitative',
+    groupTitle: 'Nhóm G — Khảo sát thực tế chuyên sâu',
+    type: 'text',
+    isDiagnostic: false,
+    hints: [
+      'Doanh số suy giảm, sức mua chung chững lại.',
+      'Chi phí đầu vào, mặt bằng, nhân công hoặc quảng cáo gia tăng.',
+      'Thiếu khách hàng mới hoặc tỷ lệ khách hàng quay lại thấp.',
+      'Cạnh tranh gay gắt về giá từ các đối thủ hoặc hàng giá rẻ.',
+      'Thiếu vốn lưu động, áp lực dòng tiền hoặc công nợ.',
+      'Khó khăn về nhân sự (tuyển dụng, giữ chân, năng suất).',
+      'Nguồn cung ứng nguyên vật liệu không ổn định hoặc phụ thuộc lớn.',
+      'Quy trình quản trị, kiểm soát thất thoát và vận hành nội bộ chưa hiệu quả.',
+    ],
+    placeholder: 'Mô tả 3 khó khăn lớn nhất, thời điểm phát sinh và mức độ ảnh hưởng thực tế...',
+    exampleSnippet: 'Ví dụ: 1. Chi phí thuê mặt bằng và quảng cáo trực tuyến tăng 20% từ đầu năm; 2. Cạnh tranh phá giá từ hàng giá rẻ khiến biên lợi nhuận giảm; 3. Khó tuyển và giữ nhân viên bán hàng có kỹ năng.',
+  },
+  {
+    id: 'q18',
+    code: 'competitors_advantage',
+    title: 'Câu 19. Đối thủ và lợi thế cạnh tranh',
+    description: 'Anh/Chị đánh giá đâu là lợi thế cạnh tranh lớn nhất của hoạt động kinh doanh so với các đối thủ? Hiện tại có những đối thủ hoặc sản phẩm thay thế nào đang tạo áp lực lớn nhất?',
+    groupKey: 'qualitative',
+    groupTitle: 'Nhóm G — Khảo sát thực tế chuyên sâu',
+    type: 'text',
+    isDiagnostic: false,
+    hints: [
+      'Lợi thế về giá bán hợp lý, tối ưu chi phí.',
+      'Lợi thế về chất lượng sản phẩm, độ bền hoặc nguồn gốc tin cậy.',
+      'Thương hiệu, uy tín và sự gắn kết khách hàng thân thiết.',
+      'Dịch vụ khách hàng, chăm sóc tận tâm và chính sách hậu mãi.',
+      'Vị trí kinh doanh đắc địa, thuận tiện giao dịch.',
+      'Khả năng tiếp cận khách hàng nhanh chóng qua kênh phân phối.',
+      'Áp lực từ đối thủ trực tiếp trong khu vực hoặc đối thủ lớn cùng ngành.',
+      'Áp lực từ sản phẩm/dịch vụ thay thế thế hệ mới.',
+    ],
+    placeholder: 'Đánh giá lợi thế cạnh tranh lớn nhất và các đối thủ/sản phẩm thay thế tạo áp lực...',
+    exampleSnippet: 'Ví dụ: Lợi thế lớn nhất là dịch vụ tư vấn tận tâm và giao hàng siêu tốc trong 2h. Áp lực lớn nhất đến từ các sàn TMĐT với nhiều shop bán hàng ngoại nhập cùng phân khúc giá rẻ hơn 15%.',
+  },
+  {
+    id: 'q19',
+    code: 'future_plans',
+    title: 'Câu 20. Kế hoạch phát triển trong tương lai',
+    description: 'Trong 12 tháng tới, Anh/Chị dự kiến sẽ thực hiện những kế hoạch hoặc thay đổi gì để cải thiện hoạt động kinh doanh? Anh/Chị đang lo ngại rủi ro hoặc cần hỗ trợ điều gì nhất?',
+    groupKey: 'qualitative',
+    groupTitle: 'Nhóm G — Khảo sát thực tế chuyên sâu',
+    type: 'text',
+    isDiagnostic: false,
+    hints: [
+      'Mở rộng quy mô, mở thêm chi nhánh hoặc kênh phân phối mới.',
+      'Phát triển sản phẩm/dịch vụ mới đáp ứng thị hiếu khách hàng.',
+      'Mở rộng thị trường, tiếp cận phân khúc khách hàng mới.',
+      'Đầu tư công nghệ, số hóa quản lý bán hàng và tồn kho.',
+      'Tối ưu hóa chi phí vận hành, tái cấu trúc chi phí biến đổi.',
+      'Tuyển dụng, đào tạo hoặc nâng cao năng suất đội ngũ.',
+      'Cải thiện quy trình quản trị, phân quyền và kiểm soát rủi ro.',
+      'Thay đổi chiến lược giá hoặc phương pháp định giá linh hoạt.',
+      'Khó khăn, rủi ro lớn nhất đang lo ngại cần tháo gỡ.',
+    ],
+    placeholder: 'Chia sẻ dự kiến kế hoạch 12 tháng tới và các rủi ro, nhu cầu cần hỗ trợ...',
+    exampleSnippet: 'Ví dụ: Trong 12 tháng tới sẽ tập trung tối ưu chi phí quảng cáo, áp dụng phần mềm quản lý kho để giảm tồn đọng, đàm phán lại với 2 nhà cung cấp. Điều lo ngại nhất là sức mua của thị trường tiếp tục giảm.',
   },
 ];

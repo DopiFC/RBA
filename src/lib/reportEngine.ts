@@ -8,15 +8,21 @@ import type {
 } from '../types/survey';
 import { calculateSurveyResults, getBandLabel } from './scoring';
 import { ALGORITHM_VERSION, INSTRUMENT_VERSION, SURVEY_QUESTIONS } from '../config/survey';
+import {
+  generateRuleBasedQualitativeSynthesis,
+  fetchAiQualitativeAnalysis,
+} from './qualitativeEngine';
 
 /**
- * Generates the full diagnostic report grounded in the 8 managerial economics texts
+ * Generates the full diagnostic report grounded in the 8 managerial economics texts,
+ * and calls the server-side Gemini API to analyze the 4 open-ended narrative questions
+ * with a resilient rule-based fallback if the API fails or is offline.
  */
-export function generateFullReport(
+export async function generateFullReport(
   answers: SurveyAnswers,
   responseId: string,
   submittedAt: string = new Date().toISOString()
-): SurveyScoringResult {
+): Promise<SurveyScoringResult> {
   const scoring = calculateSurveyResults(answers, responseId);
 
   // Identify prioritized issues based on high normalized indices (>= 50) and specific answers
@@ -325,6 +331,128 @@ export function generateFullReport(
     keyStrengths: strengths.length > 0 ? strengths : ['Doanh nghiệp thể hiện tinh thần chủ động tự đánh giá và tiếp cận khoa học trong quản trị.'],
     scenarios,
     actionRoadmap,
+    qualitativeAnalysis: await (async () => {
+      try {
+        return await fetchAiQualitativeAnalysis(answers, scoring);
+      } catch (err) {
+        console.warn('[ReportEngine] Error fetching AI qualitative analysis, applying fallback synthesis:', err);
+        return generateRuleBasedQualitativeSynthesis(answers, scoring);
+      }
+    })(),
+  };
+}
+
+/**
+ * Synchronous version using deterministic rule-based qualitative synthesis (for offline / instant preview)
+ */
+export function generateFullReportSync(
+  answers: SurveyAnswers,
+  responseId: string,
+  submittedAt: string = new Date().toISOString()
+): SurveyScoringResult {
+  const scoring = calculateSurveyResults(answers, responseId);
+  const issues: DiagnosticIssue[] = [];
+  const strengths: string[] = [];
+
+  // Evaluate Q5 & Q6
+  const q05Index = scoring.indicatorScores.q05?.normalizedIndex ?? 0;
+  const q06Index = scoring.indicatorScores.q06?.normalizedIndex ?? 0;
+  if (answers.q05_demand_trend === 'sharp_decrease' || answers.q05_demand_trend === 'slight_decrease' || answers.q05_demand_trend === 'unpredictable') {
+    issues.push({
+      id: 'issue_demand_contraction',
+      indicatorKey: 'q05',
+      title: 'Xu hướng cầu sụt giảm hoặc biến động mạnh',
+      observedAnswer: `Câu 6: Người tham gia ghi nhận nhu cầu khách hàng "${getOptionLabel('q05', answers.q05_demand_trend)}".`,
+      theoreticalConcept: 'Tài liệu 2: Cung, cầu và giá thị trường - Dịch chuyển hàm cầu và các nhân tố quyết định sức mua thị trường.',
+      managerialImplication: 'Doanh thu sụt giảm có thể bắt nguồn từ thu hẹp quy mô thị trường, áp lực từ hàng hóa thay thế hoặc thay đổi thị hiếu tiêu dùng.',
+      potentialRisks: 'Tồn kho ứ đọng, suy giảm dòng tiền và áp lực hạ giá thiếu cân nhắc gây giảm biên lợi nhuận.',
+      dataToCollect: 'Tần suất mua hàng theo nhóm khách, dữ liệu bán hàng theo tuần, biến động giá của hàng hóa thay thế.',
+      recommendedAction: 'Phân tích lại phân khúc khách hàng cốt lõi; rà soát tính cạnh tranh của sản phẩm; tối ưu chi phí biến đổi để duy trì dòng tiền.',
+      severity: q05Index >= 75 ? 'very_high' : 'high',
+    });
+  } else if (answers.q05_demand_trend === 'sharp_increase' || answers.q05_demand_trend === 'slight_increase') {
+    strengths.push('Nhu cầu thị trường đang trong xu hướng tăng trưởng tích cực, mở ra cơ hội tối ưu hóa sản lượng và mở rộng quy mô hợp lý.');
+  }
+
+  if (answers.q06_price_sensitivity === 'revenue_sharp_drop' || answers.q06_price_sensitivity === 'many_switch_competitor') {
+    issues.push({
+      id: 'issue_high_elasticity',
+      indicatorKey: 'q06',
+      title: 'Độ nhạy cảm về giá của khách hàng ở mức cao (Cầu co giãn lớn)',
+      observedAnswer: `Câu 7: Phản ứng khách hàng khi tăng giá: "${getOptionLabel('q06', answers.q06_price_sensitivity)}".`,
+      theoreticalConcept: 'Tài liệu 2: Cung, cầu và giá thị trường - Hệ số co giãn của cầu theo giá và tác động ngược chiều tới tổng doanh thu (|Ed| > 1).',
+      managerialImplication: 'Sản phẩm có mức độ thay thế cao hoặc thiếu rào cản chuyển đổi; việc tự ý tăng giá sẽ khiến khách hàng lập tức chuyển sang đối thủ.',
+      potentialRisks: 'Mất thị phần nhanh chóng nếu tăng giá đơn lẻ mà không gia tăng giá trị nhận thức hoặc đóng gói kèm dịch vụ.',
+      dataToCollect: 'Khảo sát mức giá sẵn lòng chi trả (WTP) của từng phân khúc; phân tích tính năng vượt trội so với đối thủ trực tiếp.',
+      recommendedAction: 'Tránh tăng giá trực tiếp trên sản phẩm hiện hữu; áp dụng chiến lược định giá theo gói (bundling), nâng cao giá trị dịch vụ hậu mãi để giảm độ nhạy giá.',
+      severity: q06Index >= 75 ? 'very_high' : 'high',
+    });
+  } else if (answers.q06_price_sensitivity === 'continue_buying') {
+    strengths.push('Khách hàng ít nhạy cảm với việc điều chỉnh giá vừa phải, phản ánh sự trung thành hoặc sản phẩm có giá trị riêng biệt khó thay thế.');
+  }
+
+  // Prioritize top issues
+  issues.sort((a, b) => {
+    const sevOrder: Record<ResultBand, number> = { very_high: 4, high: 3, moderate: 2, low: 1 };
+    return sevOrder[b.severity] - sevOrder[a.severity];
+  });
+  const topPriorities = issues.slice(0, 3);
+
+  // Scenarios
+  const scenarios: QualitativeScenarios = {
+    favorable: {
+      title: 'Kịch bản Thuận lợi: Ổn định dòng tiền & Mở rộng phân khúc có giá trị cao',
+      description: 'Nếu doanh nghiệp nhanh chóng chuẩn hóa công thức tính giá, phân định rạch ròi chi phí đơn vị và củng cố tín hiệu chất lượng minh bạch.',
+      triggerConditions: ['Nhu cầu thị trường duy trì ổn định hoặc tăng trưởng nhẹ', 'Giá nguyên vật liệu và chi phí đầu vào không có đột biến lớn'],
+      monitoringIndicators: ['Biên lợi nhuận gộp theo từng sản phẩm', 'Tỷ lệ khách hàng quay lại mua hàng'],
+    },
+    baseline: {
+      title: 'Kịch bản Cơ sở: Duy trì hoạt động trong điều kiện cạnh tranh hiện tại',
+      description: 'Doanh nghiệp tiếp tục duy trì doanh thu ở mức hòa vốn hoặc có lãi nhẹ, nhưng vẫn chịu áp lực so sánh giá từ các đối thủ cạnh tranh.',
+      triggerConditions: ['Chi phí đầu vào biến động trong phạm vi dự kiến', 'Đối thủ cạnh tranh duy trì mức giá tương đương'],
+      monitoringIndicators: ['Doanh thu thuần hàng tháng', 'Tuổi nợ và công nợ phải thu'],
+    },
+    adverse: {
+      title: 'Kịch bản Thách thức: Biên lợi nhuận bị xói mòn do chi phí tăng hoặc chiến tranh giá',
+      description: 'Nếu chi phí đầu vào tiếp tục leo thang trong khi khách hàng nhạy cảm với giá và đối thủ tung khuyến mãi kéo dài.',
+      triggerConditions: ['Giá nguyên vật liệu đầu vào tăng liên tục vượt dự toán', 'Khách hàng chuyển sang các sản phẩm thay thế giá rẻ'],
+      monitoringIndicators: ['Chỉ số hòa vốn thực tế', 'Tốc độ luân chuyển dòng tiền tiền mặt'],
+    },
+  };
+
+  // Action roadmap
+  const actionRoadmap: ActionRoadmap = {
+    thirtyDays: [
+      'Thiết lập bảng theo dõi chi phí đơn vị (Unit Cost) và doanh thu cho nhóm sản phẩm đóng góp 80% doanh thu.',
+      'Rà soát ngay các khoản chi phí biến đổi đang có xu hướng tăng nhanh hơn sản lượng.',
+    ],
+    ninetyDays: [
+      'Cải tiến quy trình định giá: Bổ sung khảo sát mức sẵn lòng chi trả (WTP) thay vì chỉ cộng chi phí đơn thuần.',
+      'Đàm phán lại điều khoản với nhà cung cấp hoặc tìm thêm ít nhất 1 nguồn cung ứng dự phòng.',
+    ],
+    twelveMonths: [
+      'Xây dựng rào cản chuyển đổi thông qua chất lượng dịch vụ và uy tín thương hiệu để thoát khỏi áp lực cạnh tranh thuần túy về giá.',
+      'Cân đối chiến lược kinh doanh theo mô hình 3 trụ cột (kinh tế - con người - môi trường) để duy trì sự phát triển bền vững.',
+    ],
+  };
+
+  return {
+    responseId,
+    instrumentVersion: INSTRUMENT_VERSION,
+    algorithmVersion: ALGORITHM_VERSION,
+    submittedAt,
+    validQuestionCount: scoring.validCount,
+    hasEnoughDataForOverall: scoring.hasEnoughDataForOverall,
+    overallAttentionIndex: scoring.overallAttentionIndex,
+    overallBand: scoring.overallBand,
+    overallBandLabel: getBandLabel(scoring.overallBand),
+    groups: scoring.groups,
+    indicatorScores: scoring.indicatorScores,
+    topPriorities,
+    keyStrengths: strengths.length > 0 ? strengths : ['Doanh nghiệp thể hiện tinh thần chủ động tự đánh giá và tiếp cận khoa học trong quản trị.'],
+    scenarios,
+    actionRoadmap,
+    qualitativeAnalysis: generateRuleBasedQualitativeSynthesis(answers, scoring),
   };
 }
 

@@ -26,6 +26,10 @@ function setupSheets(ss) {
       'Email người tham gia (email)',
       'Phiên bản công cụ (instrument_version)',
       'Phiên bản đồng thuận (consent_version)',
+      'Tên đơn vị kinh doanh (business_name)',
+      'Địa bàn hoạt động (business_location)',
+      'Vai trò người trả lời (respondent_role)',
+      'Website / Kênh bán hàng (business_website)',
       'Loại hình hoạt động (business_type)',
       'Ngành nghề (industry)',
       'Thời gian hoạt động (business_age)',
@@ -41,6 +45,10 @@ function setupSheets(ss) {
       'Câu 13: Minh bạch thông tin (q13)',
       'Câu 14: Giám sát & trách nhiệm (q14)',
       'Câu 15: Phát triển bền vững (q15)',
+      'Câu 17: Mô tả hoạt động kinh doanh (q16)',
+      'Câu 18: Khó khăn thực tế (q17)',
+      'Câu 19: Đối thủ & lợi thế cạnh tranh (q18)',
+      'Câu 20: Kế hoạch phát triển tương lai (q19)',
       'Điểm chuẩn hóa từng câu (JSON)',
       'Điểm 5 nhóm chỉ báo (JSON)',
       'Chỉ số chú ý tổng thể (overall_attention_index)',
@@ -151,31 +159,49 @@ function handleSurveySubmission(ss, data) {
   var contactsSheet = ss.getSheetByName('RespondentContacts');
 
   var answers = data.answers || {};
-  var q10Val = Array.isArray(answers.q10_pricing_method)
-    ? answers.q10_pricing_method.join(', ')
-    : (answers.q10_pricing_method || '');
+  var q10Val = Array.isArray(answers.q10_pricing_methods || answers.q10_pricing_method)
+    ? (answers.q10_pricing_methods || answers.q10_pricing_method).join(', ')
+    : (answers.q10_pricing_methods || answers.q10_pricing_method || '');
+
+  var businessName = data.business_name || answers.business_name || '';
+  var businessLocation = data.business_location || answers.business_location || '';
+  var respondentRole = data.respondent_role || answers.respondent_role || '';
+  var businessWebsite = data.business_website || answers.business_website || '';
+
+  var q16Val = answers.q16_business_description || answers.q16 || data.q16 || '';
+  var q17Val = answers.q17_challenges || answers.q17 || data.q17 || '';
+  var q18Val = answers.q18_competitors_advantage || answers.q18 || data.q18 || '';
+  var q19Val = answers.q19_future_plans || answers.q19 || data.q19 || '';
 
   var rowResponses = [
     data.responseId || '',
     data.clientTimestamp || new Date().toISOString(),
     email,
-    'v1.0.0',
+    'v2.0.0',
     data.consentVersion || 'v1.0.0',
+    businessName,
+    businessLocation,
+    respondentRole,
+    businessWebsite,
     answers.q01_business_type || '',
     answers.q02_industry || '',
     answers.q03_business_age || '',
     answers.q04_employee_band || '',
     answers.q05_demand_trend || '',
-    answers.q06_price_elasticity || '',
-    answers.q07_supply_cost_change || '',
-    answers.q08_cost_control_structure || '',
+    answers.q06_price_sensitivity || answers.q06_price_elasticity || '',
+    answers.q07_supply_cost || answers.q07_supply_cost_change || '',
+    answers.q08_cost_control || answers.q08_cost_control_structure || '',
     answers.q09_resource_efficiency || '',
     q10Val,
-    answers.q11_competitor_pressure || '',
+    answers.q11_competition_pressure || answers.q11_competitor_pressure || '',
     answers.q12_strategic_reaction || '',
     answers.q13_info_transparency || '',
     answers.q14_governance_control || '',
-    answers.q15_sustainability_priority || '',
+    answers.q15_sustainability || answers.q15_sustainability_priority || '',
+    q16Val,
+    q17Val,
+    q18Val,
+    q19Val,
     JSON.stringify(data.scores_individual || {}),
     JSON.stringify(data.group_scores || {}),
     data.overallAttentionIndex !== undefined ? data.overallAttentionIndex : '',

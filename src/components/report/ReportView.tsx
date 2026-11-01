@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Printer,
   Copy,
@@ -17,11 +17,17 @@ import {
   Mail,
   Loader2,
   Home,
+  Sparkles,
+  RefreshCw,
+  Clock,
+  Scale,
+  Building,
 } from 'lucide-react';
-import type { SurveyScoringResult, SurveyAnswers } from '../../types/survey';
+import type { SurveyScoringResult, SurveyAnswers, QualitativeAnalysisResult } from '../../types/survey';
 import { getBandColorClasses, getBandLabel } from '../../lib/scoring';
 import { IndicatorBarChart } from '../dashboard/IndicatorBarChart';
 import { IndicatorRadarChart } from '../dashboard/IndicatorRadarChart';
+import { fetchAiQualitativeAnalysis } from '../../lib/qualitativeEngine';
 
 interface ReportViewProps {
   report: SurveyScoringResult;
@@ -41,8 +47,43 @@ export const ReportView: React.FC<ReportViewProps> = ({
   const [copied, setCopied] = useState(false);
   const [isExportingPdf, setIsExportingPdf] = useState(false);
   const [pdfSuccess, setPdfSuccess] = useState(false);
+  const [qualitative, setQualitative] = useState<QualitativeAnalysisResult | null>(report.qualitativeAnalysis || null);
+  const [isLoadingAi, setIsLoadingAi] = useState(false);
+  const [aiAttempted, setAiAttempted] = useState(false);
+
   const reportContainerRef = useRef<HTMLDivElement>(null);
   const overallBandClasses = getBandColorClasses(report.overallBand);
+
+  // Trigger server-side AI text analysis if narrative answers are available
+  const handleTriggerAiAnalysis = async () => {
+    setIsLoadingAi(true);
+    try {
+      const res = await fetchAiQualitativeAnalysis(answers, report);
+      setQualitative(res);
+    } catch (err) {
+      console.warn('[ReportView] AI analysis refresh notice:', err);
+    } finally {
+      setIsLoadingAi(false);
+      setAiAttempted(true);
+    }
+  };
+
+  useEffect(() => {
+    const hasNarrative = !!(
+      answers.q16_business_description?.trim() ||
+      answers.q16?.trim() ||
+      answers.q17_challenges?.trim() ||
+      answers.q17?.trim() ||
+      answers.q18_competitors_advantage?.trim() ||
+      answers.q18?.trim() ||
+      answers.q19_future_plans?.trim() ||
+      answers.q19?.trim()
+    );
+
+    if (hasNarrative && !report.qualitativeAnalysis?.generatedByAi && !aiAttempted) {
+      handleTriggerAiAnalysis();
+    }
+  }, []);
 
   // Business background labels
   const businessTypeLabels: Record<string, string> = {
@@ -73,13 +114,14 @@ export const ReportView: React.FC<ReportViewProps> = ({
   };
 
   const handleCopySummary = () => {
+    const bName = answers.business_name ? `Đơn vị: ${answers.business_name} (${answers.business_location || 'N/A'})\n` : '';
     const summaryText = `[BÁO CÁO CHẨN ĐOÁN KINH TẾ DOANH NGHIỆP RBA]
-Mã khảo sát: ${report.responseId}
+${bName}Mã khảo sát: ${report.responseId}
 Ngày thực hiện: ${new Date(report.submittedAt).toLocaleDateString('vi-VN')}
 Loại hình: ${businessTypeLabels[answers.q01_business_type || ''] || 'N/A'}
 Ngành: ${industryLabels[answers.q02_industry || ''] || 'N/A'}
 Chỉ số Chú ý Tổng thể: ${report.overallAttentionIndex !== null ? `${report.overallAttentionIndex}/100 (${report.overallBandLabel})` : 'Chưa đủ dữ liệu tối thiểu 8 câu'}
-Số câu trả lời hợp lệ: ${report.validQuestionCount}/11 câu
+Số câu trả lời hợp lệ tính điểm: ${report.validQuestionCount}/11 câu
 
 3 VẤN ĐỀ ƯU TIÊN:
 ${report.topPriorities.map((p, i) => `${i + 1}. ${p.title} (${p.theoreticalConcept.split(' - ')[0]})\n   -> Hành động: ${p.recommendedAction}`).join('\n')}
@@ -299,18 +341,28 @@ Hệ thống RBA - Nghiên cứu Kinh tế học cho nhà quản trị.`;
           {/* Business Profile */}
           <div className="bg-slate-50 rounded-xl p-4 sm:p-5 border border-slate-200/80 space-y-2.5 text-xs sm:text-sm">
             <div className="font-semibold text-slate-900 text-xs uppercase tracking-wider mb-1 text-slate-500">
-              Hồ sơ Phân nhóm Khảo sát
+              Hồ sơ Phân nhóm & Nhận diện Đơn vị
             </div>
+            {answers.business_name && (
+              <div className="flex justify-between py-1 border-b border-slate-200/60">
+                <span className="text-slate-600">Đơn vị kinh doanh:</span>
+                <span className="font-bold text-slate-900">
+                  {answers.business_name}
+                </span>
+              </div>
+            )}
+            {answers.business_location && (
+              <div className="flex justify-between py-1 border-b border-slate-200/60">
+                <span className="text-slate-600">Địa bàn / Vai trò:</span>
+                <span className="font-medium text-slate-900">
+                  {answers.business_location} {answers.respondent_role ? `• ${answers.respondent_role}` : ''}
+                </span>
+              </div>
+            )}
             <div className="flex justify-between py-1 border-b border-slate-200/60">
-              <span className="text-slate-600">Loại hình kinh doanh:</span>
-              <span className="font-medium text-slate-900">
-                {businessTypeLabels[answers.q01_business_type || ''] || 'Chưa cung cấp'}
-              </span>
-            </div>
-            <div className="flex justify-between py-1 border-b border-slate-200/60">
-              <span className="text-slate-600">Ngành nghề hoạt động:</span>
-              <span className="font-medium text-slate-900">
-                {industryLabels[answers.q02_industry || ''] || 'Chưa cung cấp'}
+              <span className="text-slate-600">Loại hình & Ngành nghề:</span>
+              <span className="font-medium text-slate-900 text-right">
+                {businessTypeLabels[answers.q01_business_type || ''] || 'N/A'} • {industryLabels[answers.q02_industry || ''] || 'N/A'}
               </span>
             </div>
             <div className="flex justify-between py-1 border-b border-slate-200/60">
@@ -431,12 +483,168 @@ Hệ thống RBA - Nghiên cứu Kinh tế học cho nhà quản trị.`;
       </section>
 
       {/* ========================================================================= */}
-      {/* PHẦN 3: PHÂN TÍCH VẤN ĐỀ CHUYÊN SÂU */}
+      {/* PHẦN 3: PHÂN TÍCH CHUYÊN SÂU TỪ THÔNG TIN THỰC TẾ */}
+      {/* ========================================================================= */}
+      <section className="bg-white rounded-2xl border border-indigo-200/90 p-6 sm:p-8 shadow-xs space-y-6">
+        <div className="border-b border-indigo-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div className="flex flex-wrap items-center gap-2 mb-1.5">
+              <span className="text-xs font-bold uppercase tracking-wider text-indigo-700">
+                Phần 3 — Chẩn đoán Thực tế Chuyên sâu
+              </span>
+              {qualitative?.generatedByAi ? (
+                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-full border border-purple-200">
+                  <Sparkles className="w-3 h-3 text-purple-600" />
+                  Phân tích AI Chuyên sâu (Gemini 3.8 Flash)
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200">
+                  Phân tích Định tính Chuẩn hóa (Mô hình Quy tắc RBA)
+                </span>
+              )}
+            </div>
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+              PHÂN TÍCH CHUYÊN SÂU TỪ THÔNG TIN THỰC TẾ
+            </h2>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Kết hợp dữ liệu lựa chọn có cấu trúc (15 câu) và 4 câu tự luận thực tiễn do người khảo sát cung cấp.
+            </p>
+          </div>
+
+          {/* Retry / Refresh AI button */}
+          <div className="print:hidden shrink-0">
+            <button
+              type="button"
+              onClick={handleTriggerAiAnalysis}
+              disabled={isLoadingAi}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition-colors disabled:opacity-50 shadow-2xs"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${isLoadingAi ? 'animate-spin' : ''}`} />
+              <span>{isLoadingAi ? 'Đang phân tích với AI...' : 'Phân tích lại với AI'}</span>
+            </button>
+          </div>
+        </div>
+
+        <div className="space-y-6 text-xs sm:text-sm">
+          {/* 1. Tổng quan hoạt động kinh doanh */}
+          <div className="bg-slate-50 rounded-xl p-4 sm:p-5 border border-slate-200 space-y-1.5">
+            <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+              <Building className="w-4 h-4 text-indigo-600" />
+              <span>1. Tổng quan hoạt động kinh doanh</span>
+            </h3>
+            <p className="text-slate-700 leading-relaxed">
+              {qualitative?.businessOverview}
+            </p>
+          </div>
+
+          {/* 2. Những vấn đề nổi bật được người khảo sát phản ánh */}
+          <div className="bg-white rounded-xl p-4 sm:p-5 border border-slate-200 space-y-2">
+            <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-amber-600" />
+              <span>2. Những vấn đề nổi bật được người khảo sát phản ánh</span>
+            </h3>
+            <ul className="space-y-2">
+              {qualitative?.keyIssuesObserved?.map((issue, idx) => (
+                <li key={idx} className="flex items-start gap-2.5 bg-amber-50/50 p-2.5 rounded-lg border border-amber-100 text-slate-800">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 shrink-0" />
+                  <span className="leading-relaxed">{issue}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* 3. Phân tích nguyên nhân có thể có */}
+          <div className="bg-white rounded-xl p-4 sm:p-5 border border-slate-200 space-y-2">
+            <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+              <Lightbulb className="w-4 h-4 text-indigo-600" />
+              <span>3. Phân tích nguyên nhân có thể có (Theo Kinh tế học cho nhà quản trị)</span>
+            </h3>
+            <ul className="space-y-2">
+              {qualitative?.rootCausesAnalysis?.map((cause, idx) => (
+                <li key={idx} className="flex items-start gap-2.5 bg-indigo-50/40 p-2.5 rounded-lg border border-indigo-100 text-slate-800">
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 mt-1.5 shrink-0" />
+                  <span className="leading-relaxed">{cause}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* 4. Đánh giá lợi thế và áp lực cạnh tranh */}
+          <div className="bg-slate-50 rounded-xl p-4 sm:p-5 border border-slate-200 space-y-1.5">
+            <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+              <Scale className="w-4 h-4 text-emerald-600" />
+              <span>4. Đánh giá lợi thế và áp lực cạnh tranh</span>
+            </h3>
+            <p className="text-slate-700 leading-relaxed">
+              {qualitative?.competitiveAssessment}
+            </p>
+          </div>
+
+          {/* 5. Các rủi ro cần ưu tiên xác minh */}
+          <div className="bg-white rounded-xl p-4 sm:p-5 border border-slate-200 space-y-2">
+            <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+              <ShieldAlert className="w-4 h-4 text-rose-600" />
+              <span>5. Các rủi ro cần ưu tiên xác minh thêm</span>
+            </h3>
+            <ul className="space-y-2">
+              {qualitative?.risksToVerify?.map((risk, idx) => (
+                <li key={idx} className="flex items-start gap-2.5 bg-rose-50/50 p-2.5 rounded-lg border border-rose-100 text-slate-800">
+                  <span className="w-1.5 h-1.5 rounded-full bg-rose-500 mt-1.5 shrink-0" />
+                  <span className="leading-relaxed">{risk}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* 6 & 7: Lộ trình can thiệp 30-90 ngày và 12 tháng */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* 6. Đề xuất giải pháp cụ thể trong 30–90 ngày */}
+            <div className="bg-emerald-50/50 rounded-xl p-4 sm:p-5 border border-emerald-200 space-y-2">
+              <h3 className="font-bold text-emerald-950 text-sm flex items-center gap-2">
+                <Clock className="w-4 h-4 text-emerald-700" />
+                <span>6. Đề xuất giải pháp cụ thể (30–90 ngày)</span>
+              </h3>
+              <ul className="space-y-2">
+                {qualitative?.roadmapThirtyToNinetyDays?.map((act, idx) => (
+                  <li key={idx} className="flex items-start gap-2 bg-white/80 p-2.5 rounded-lg border border-emerald-100 text-slate-800">
+                    <span className="font-bold text-emerald-700 text-xs shrink-0 mt-0.5">30-90d:</span>
+                    <span className="leading-relaxed">{act}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* 7. Định hướng cải thiện trong 12 tháng */}
+            <div className="bg-indigo-50/50 rounded-xl p-4 sm:p-5 border border-indigo-200 space-y-2">
+              <h3 className="font-bold text-indigo-950 text-sm flex items-center gap-2">
+                <Compass className="w-4 h-4 text-indigo-700" />
+                <span>7. Định hướng cải thiện trong 12 tháng</span>
+              </h3>
+              <ul className="space-y-2">
+                {qualitative?.roadmapTwelveMonths?.map((dir, idx) => (
+                  <li key={idx} className="flex items-start gap-2 bg-white/80 p-2.5 rounded-lg border border-indigo-100 text-slate-800">
+                    <span className="font-bold text-indigo-700 text-xs shrink-0 mt-0.5">12m:</span>
+                    <span className="leading-relaxed">{dir}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Grounding & Methodology Note */}
+          <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-[11px] text-slate-500 italic">
+            <strong>Căn cứ khoa học:</strong> {qualitative?.sourceBasis || 'Mọi nhận định dựa trên thông tin thực tế do người khảo sát cung cấp; không tự suy diễn số liệu tài chính.'}
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* PHẦN 4: PHÂN TÍCH VẤN ĐỀ CHUYÊN SÂU THEO CHỈ BÁO */}
       {/* ========================================================================= */}
       <section className="space-y-6">
         <div className="border-b border-slate-200 pb-2">
           <span className="text-xs font-bold uppercase tracking-wider text-indigo-700">
-            Phần 3 — Phân tích Vấn đề Chuyên sâu
+            Phần 4 — Phân tích Vấn đề Chuyên sâu
           </span>
           <h2 className="text-xl font-bold text-slate-900">
             Căn cứ Kinh tế học & Đề xuất Can thiệp
@@ -515,12 +723,12 @@ Hệ thống RBA - Nghiên cứu Kinh tế học cho nhà quản trị.`;
       </section>
 
       {/* ========================================================================= */}
-      {/* PHẦN 4: ĐỊNH HƯỚNG TƯƠNG LAI & KỊCH BẢN */}
+      {/* PHẦN 5: ĐỊNH HƯỚNG TƯƠNG LAI & KỊCH BẢN */}
       {/* ========================================================================= */}
       <section className="space-y-6">
         <div className="border-b border-slate-200 pb-2">
           <span className="text-xs font-bold uppercase tracking-wider text-indigo-700">
-            Phần 4 — Định hướng Tương lai
+            Phần 5 — Định hướng Tương lai & Kịch bản
           </span>
           <h2 className="text-xl font-bold text-slate-900">
             Lộ trình Thực thi & Kịch bản Định tính
@@ -668,14 +876,14 @@ Hệ thống RBA - Nghiên cứu Kinh tế học cho nhà quản trị.`;
       </section>
 
       {/* ========================================================================= */}
-      {/* PHẦN 5: HẠN CHẾ CỦA BÁO CÁO (MANDATORY EXACT DISCLAIMER) */}
+      {/* PHẦN 6: HẠN CHẾ CỦA BÁO CÁO (MANDATORY EXACT DISCLAIMER) */}
       {/* ========================================================================= */}
       <section className="bg-amber-50/80 rounded-xl border border-amber-300 p-5 sm:p-6 text-amber-950 text-xs sm:text-sm">
         <div className="flex items-start gap-3">
           <ShieldAlert className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
           <div className="space-y-1.5 leading-relaxed">
             <span className="font-bold text-amber-900 block uppercase tracking-wider text-xs">
-              Phần 5 — Hạn chế của Báo cáo
+              Phần 6 — Hạn chế của Báo cáo
             </span>
             <p className="italic">
               “Báo cáo được xây dựng từ thông tin tự đánh giá của người tham gia và một bộ chỉ báo chẩn đoán ban đầu. Kết quả không thay thế báo cáo tài chính, kiểm toán, nghiên cứu thị trường chuyên sâu hoặc tư vấn chuyên ngành. Những vấn đề được nêu là các tín hiệu cần xem xét, không phải kết luận chắc chắn về tình trạng hay tương lai của hoạt động kinh doanh.”
@@ -686,7 +894,7 @@ Hệ thống RBA - Nghiên cứu Kinh tế học cho nhà quản trị.`;
       </div>
 
       {/* ========================================================================= */}
-      {/* PHẦN 6: ĐIỀU HƯỚNG VÀ PHẢN HỒI */}
+      {/* PHẦN 7: ĐIỀU HƯỚNG VÀ PHẢN HỒI */}
       {/* ========================================================================= */}
       <section className="bg-white rounded-xl border border-slate-200 p-6 flex flex-col sm:flex-row items-center justify-between gap-4 print:hidden">
         <div>
